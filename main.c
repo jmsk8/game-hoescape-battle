@@ -5,15 +5,10 @@ void print_result()
 {
         FILE *fichier;
     char ligne[1000];
-
-    // Ouvrir le fichier en mode lecture
-    fichier = fopen("loose.txt", "r");
-    // Lire et afficher le contenu ligne par ligne
+    fichier = fopen("result_print/loose.txt", "r");
     while (fgets(ligne, sizeof(ligne), fichier) != NULL) {
         printf("%s", ligne);
     }
-
-    // Fermer le fichier
     fclose(fichier);
 }
 int main(void)

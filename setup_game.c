@@ -90,21 +90,32 @@ void setup_config(Config *config)
     config->size_y = 42;
     int check = 0;
     char rep[6];
-    while (check == 0)
+      while (check == 0)
     {
         printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
-        scanf("%s", rep);
-    
+        if (scanf("%5s", rep) != 1) {
+            // Erreur de saisie, affichez un message d'erreur et réessayez
+            printf("Erreur de saisie. Veuillez réessayer.\n");
+            continue;
+        }
+
         if(ft_strcmp(rep,"size") == 0)
         {
-            {
-                printf("Entrez la taille x : ");
-                scanf("%d", &(config->size_x));
-                printf("Entrez la taille y : ");
-                scanf("%d", &(config->size_y));
+            printf("Entrez la taille x : ");
+            if (scanf("%d", &(config->size_x)) != 1) {
+                printf("Erreur de saisie. Veuillez réessayer.\n");
+                continue;
+            }
+            printf("Entrez la taille y : ");
+            if (scanf("%d", &(config->size_y)) != 1) {
+                printf("Erreur de saisie. Veuillez réessayer.\n");
+                continue;
             }
             printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
-            scanf("%s", rep);
+            if (scanf("%5s", rep) != 1) {
+                printf("Erreur de saisie. Veuillez réessayer.\n");
+                continue;
+            }
         }
     
         if(ft_strcmp(rep,"easy") == 0)
@@ -135,7 +146,9 @@ void setup_config(Config *config)
             config->game_speed = 72000;
             check = 1;
         }
-        system("clear");
+        int result = system("clear");
+        if (result == -1) 
+            printf("Erreur lors de l'exécution de la commande 'clear'.\n");
     }
 }
 
@@ -143,7 +156,7 @@ void setup_game(char ***map, Entity *entity, Config *config)
 {
     setup_config(config);
     setup_map_memory(map, config);
-    entity->player = (Player*)player_spawn(map, config);
+    entity->player = (Player*)player_spawn(config);
     girflfriend_spawn(map, config);
     bush_spawn(map, config);
     pute_spawn(map,&entity->pute, config);

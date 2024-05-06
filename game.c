@@ -43,17 +43,9 @@ void *player_move(void *args)
     Player_Args *player_args = (Player_Args *)args;
     Player *player = player_args->player;
     char ***map = player_args->map;
-    Config *config = player_args->config;
-    int x_tmp;
-    int y_tmp;
     int ch;
-    int bullet;
     while (flag)
     {
-        x_tmp = player->coord_x;
-        y_tmp = player->coord_y;
-
-        bullet = 1;
         ch = getch();
         (*map)[player->coord_x][player->coord_y] = ' ';
         switch (ch)
@@ -146,7 +138,6 @@ void *pute_move(void *args)
             usleep(speed);
         }
         current = head;
-        // usleep(speed);
     }
     free(putes_args);
     pthread_exit(NULL);
@@ -173,9 +164,8 @@ int checkpos(Player *player, Pute *pute, Config *config)
 
 void *shotgun_clear(void *args)
 {
-    Pute_args *putes_args = (Pute_args *)args;
-    Pute *current = putes_args->pute;
-    char ***map = putes_args->map;
+    Player_Args *shotgunArgs = (Player_Args *)args;
+    char ***map = shotgunArgs->map;
     int x;
     int y;
 
@@ -197,29 +187,35 @@ void *shotgun_clear(void *args)
             x = 0;
         usleep(150000);
     }
-    free(putes_args);
+    free(shotgunArgs);
     pthread_exit(NULL);
 }
 
-void check_dead_pute(Pute *pute, char ***map)
+void *check_dead_pute(void * args)
  {
-     while (pute != NULL)
+    Pute_args *pute_args = (Pute_args *)args;
+    Pute *pute = pute_args->pute;
+    Pute *head = pute;
+    char ***map = pute_args->map;
+
+    while (flag)
+    {
+        while (pute != NULL)
         {
             if ((*map)[pute->coord_x][pute->coord_y] == BULLET)
                 pute->is_alive = 0;
             pute = pute->next;
         }
+        pute = head;
+        usleep(10);
+    }
  }
+
 int game(char **map, Entity *entity, Config *config) {
     int check = 1;
-    create_player_thread(entity, &map, config);
-    create_pute_thread(entity,&map, config);
-    creat_display_thread(map, entity->player);
-    creat_shotgun_check_thread(entity->pute, &map);
-    //creat_check_dead_pute(entity->pute, map);
+    creat_threads(config,entity, &map);
     while (check == 1 && flag == 1) {
         map_struct(&map, config);
-        check_dead_pute(entity->pute, &map);
         check = checkpos(entity->player, entity->pute, config);
         usleep(10);
     } 

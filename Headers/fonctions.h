@@ -4,7 +4,7 @@
 
 void setup_game(char ***map, Entity *entity, Config *config);
 
-struct Player *player_spawn(char ***map, Config *config);
+struct Player *player_spawn(Config *config);
 
 void map_struct(char ***map, Config *config);
 
@@ -34,13 +34,19 @@ void *player_move(void *args);
 
 void *display_map(void *args);
 
-void create_player_thread(Entity *entity, char ***map, Config *config);
+void creat_threads(Config *config, Entity * entity, char ***map);
+
+void create_player_thread(Entity *entity, char ***map);
 
 void create_pute_thread(Entity *entity, char ***map, Config *config);
 
-void creat_shotgun_check_thread(Pute *pute, char ***map);
+void creat_shotgun_check_thread(char ***map);
 
 void creat_display_thread(char **map, Player *player);
+
+void creat_check_dead_pute(Pute *pute, char ***map);
+
+void *check_dead_pute(void * args);
 
 void player_shotgun(Player *player, char ***map,int ch);
 

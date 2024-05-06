@@ -10,8 +10,8 @@
 #include <unistd.h>
 
 #define BUSH 'o'
-#define PUTE 'p'
-#define SMART_PUTE 'P'
+#define PUTE 'h'
+#define SMART_PUTE 'H'
 #define PLAYER "Q"
 #define GIRLFRIEND 'g'
 #define PUTE_PLAYER 49
@@ -64,7 +64,6 @@ typedef struct Entity
 typedef struct {
     Player *player;
     char ***map;
-    Config *config;
 } Player_Args;
 
 typedef struct {

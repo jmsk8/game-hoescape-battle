@@ -1,7 +1,7 @@
 #include  "Headers/fonctions.h"
 #include  "Headers/define.h"
 
-struct Player *player_spawn(char ***map, Config *config)
+struct Player *player_spawn(Config *config)
 {
     Player *newplayer = malloc(sizeof(Player));
     if (newplayer == NULL) {
