@@ -94,7 +94,6 @@ void setup_config(Config *config)
     {
         printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
         if (scanf("%5s", rep) != 1) {
-            // Erreur de saisie, affichez un message d'erreur et réessayez
             printf("Erreur de saisie. Veuillez réessayer.\n");
             continue;
         }
@@ -122,6 +121,7 @@ void setup_config(Config *config)
         {
             config->numb_of_pute = ((config->size_x * config->size_y ) / 16);
             config->numb_of_bush = ((config->size_x * config->size_y ) / 14);
+            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
             config->game_speed = 10000;
             check = 1;
         }
@@ -129,6 +129,7 @@ void setup_config(Config *config)
         {
             config->numb_of_pute = ((config->size_x * config->size_y ) / 13);
             config->numb_of_bush = ((config->size_x * config->size_y ) / 12);
+            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 120);
             config->game_speed = 8000;
             check = 1;
         }
@@ -136,6 +137,7 @@ void setup_config(Config *config)
         {
             config->numb_of_pute = ((config->size_x * config->size_y ) / 10);
             config->numb_of_bush = ((config->size_x * config->size_y ) / 8);
+            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 90);
             config->game_speed = 7000;
             check = 1;
         }
@@ -143,7 +145,8 @@ void setup_config(Config *config)
         {
             config->numb_of_pute = 0;
             config->numb_of_bush = 0;
-            config->game_speed = 72000;
+            config->game_speed = 10000;
+            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
             check = 1;
         }
         int result = system("clear");
@@ -160,6 +163,7 @@ void setup_game(char ***map, Entity *entity, Config *config)
     girflfriend_spawn(map, config);
     bush_spawn(map, config);
     pute_spawn(map,&entity->pute, config);
+    smartPute_spawn(map,&entity->smartPute,config);
     initscr();
     noecho();
     curs_set(0);

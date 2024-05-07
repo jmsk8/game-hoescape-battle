@@ -54,3 +54,19 @@ void pute_spawn(char ***map, Pute **pute, Config *config)
         i++;
 	}
 }
+
+void smartPute_spawn(char ***map, Pute **smartPute, Config *config)
+{
+    int x;
+    int y;
+    int i;
+
+    i = 0;
+    while(i < config->numb_of_smartPute)
+	{
+	    coord_generator (map, &x, &y, config);
+	    pushPute (smartPute, x, y, i);
+	    (*map)[x][y] = SMART_PUTE;
+        i++;
+	}
+}

@@ -59,7 +59,7 @@ int check(char c, int is_player)
   }
   else
   {
-    if (c == PUTE || c == MAP_LIMITE || c == SAFE_ZONE || c == SMART_PUTE)
+    if (c == PUTE || c == MAP_LIMITE || c == SAFE_ZONE || c == SMART_PUTE || c == SMART_PUTE)
       return 1;
     else if (c == BUSH)
       return 2;
@@ -196,4 +196,42 @@ void player_shotgun(Player *player, char ***map, int ch)
         }
         break;
     }
+}
+
+int target_tracking(Pute *smartPute, Player *target)
+{
+    int direction = 0;
+    int x;
+    int y;
+    int tx;
+    int ty;
+
+    x = smartPute->coord_x;
+    y = smartPute->coord_y;
+    tx = target->coord_x;
+    ty = target->coord_y;
+    srand( time( NULL ) );
+    if (y <= ty && x == tx)
+        direction = 2;
+    else if (y >= ty && x == tx)
+        direction = 4;
+    else if (y == ty && x <= tx)
+        direction = 3;
+    else if (y == ty && x >= tx)
+        direction = 1;
+    else if (y <= ty && x >= tx)
+        direction = rand() % 2 + 1; // 1 ou 2 en haut a droite
+    else if (y >= ty && x >= tx)
+        direction = rand() % 2 + 4;  // 4 ou 5 en haut a gauche
+    else if (y >= ty && x <= tx)
+        direction = rand() % 2 + 3;  //3 ou 4 en bas a gauche
+    else if (y <= ty && x <= tx)
+        direction = rand() % 2 + 2;  //2 ou 3 en bas a droite
+
+        //1 = haut x--
+        //2 =gauche  y-- 
+        // 3 = bas x++
+        //4 = droite y++
+        
+    return (direction);
 }

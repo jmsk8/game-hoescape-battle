@@ -143,20 +143,90 @@ void *pute_move(void *args)
     pthread_exit(NULL);
 }
 
-int checkpos(Player *player, Pute *pute, Config *config)
+void *smartPute_move(void *args)
+{
+    char ***map;
+    int direction;
+    int x;
+    int y;
+    Pute_args *smartPutes_args = (Pute_args *)args;
+    Pute *current = smartPutes_args->smartPute;
+    Pute *head = smartPutes_args->smartPute;
+    Player *player = smartPutes_args->player;
+    map = smartPutes_args->map;
+    int speed = smartPutes_args->game_speed;
+    while (flag)
+    {
+        while (current != NULL)
+        {
+            (*map)[current->coord_x][current->coord_y] = ' ';
+            if (!current->is_alive)
+            {
+                current->coord_x = 0;
+                current->coord_x = 0;
+                (*map)[current->coord_x][current->coord_y] = MAP_LIMITE;
+            }
+            else
+            {
+                direction = target_tracking(current, player);
+                x = current->coord_x;
+                y = current->coord_y;
+                switch (direction)
+                {
+                case 1: // haut
+                    case_move(map, &x, &y, 0, 1);
+                    break;
+                case 3: // bas
+                    case_move(map, &x, &y, 1, 1);
+                    break;
+                case 2: // droite
+                    case_move(map, &x, &y, 0, 0);
+                    break;
+                case 4: // gauche
+                    case_move(map, &x, &y, 1, 0);
+                    break;
+                case 5: // haut
+                    case_move(map, &x, &y, 0, 1);
+                    break;
+                default:
+                    break;
+                }
+                current->coord_x = x;
+                current->coord_y = y;
+                (*map)[x][y] = SMART_PUTE;
+            }
+            current = current->next;
+            usleep(speed*10);
+        }
+        current = head;
+    }
+    free(smartPutes_args);
+    pthread_exit(NULL);
+}
+
+int checkpos(Player *player, Pute *pute, Pute*smartPute, Config *config)
 {
     int x;
     int y;
-    Pute *current = pute;
+    Pute *current_pute = pute;
+    Pute *current_smartPute = smartPute;
+
     x = player->coord_x;
     y = player->coord_y;
     if (x == config->size_x  / 2 && y == config->size_y - 7)
         return (2);
-    while (current != NULL)
+    while (current_pute != NULL)
     {
-        if (x == current->coord_x && y == current->coord_y)
+        if (x == current_pute->coord_x && y == current_pute->coord_y)
             return (0);
-        current = current->next;
+        current_pute = current_pute->next;
+    }
+
+    while (current_smartPute != NULL)
+    {
+        if (x == current_smartPute->coord_x && y == current_smartPute->coord_y)
+            return (0);
+        current_smartPute = current_smartPute->next;
     }
        
         return (1);
@@ -191,11 +261,13 @@ void *shotgun_clear(void *args)
     pthread_exit(NULL);
 }
 
-void *check_dead_pute(void * args)
- {
+void *check_dead_pute(void *args)
+{
     Pute_args *pute_args = (Pute_args *)args;
     Pute *pute = pute_args->pute;
-    Pute *head = pute;
+    Pute *smartPute = pute_args->smartPute;
+    Pute *pute_head = pute;
+    Pute *smartPute_head = smartPute;
     char ***map = pute_args->map;
 
     while (flag)
@@ -206,17 +278,25 @@ void *check_dead_pute(void * args)
                 pute->is_alive = 0;
             pute = pute->next;
         }
-        pute = head;
+
+        while (smartPute != NULL)
+        {
+            if ((*map)[smartPute->coord_x][smartPute->coord_y] == BULLET)
+                smartPute->is_alive = 0;
+            smartPute = smartPute->next;
+        }
+        pute = pute_head;
+        smartPute = smartPute_head;
         usleep(10);
     }
- }
+}
 
 int game(char **map, Entity *entity, Config *config) {
     int check = 1;
     creat_threads(config,entity, &map);
     while (check == 1 && flag == 1) {
         map_struct(&map, config);
-        check = checkpos(entity->player, entity->pute, config);
+        check = checkpos(entity->player, entity->pute, entity->smartPute, config);
         usleep(10);
     } 
     flag = 0;

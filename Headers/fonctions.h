@@ -14,6 +14,8 @@ void bush_spawn(char ***map, Config *config);
 
 void pute_spawn(char ***map, struct Pute **pute, Config *config);
 
+void smartPute_spawn(char ***map, Pute **smartPute, Config *config);
+
 void coord_generator (char ***map, int *x, int *y, Config *config);
 
 void pushPute (Pute **head, int x, int y, int id);
@@ -22,6 +24,8 @@ void ft_range(int ***tab, int min, int max);
 
 int ft_strcmp(char *s1, char*s2);
 
+int target_tracking(Pute *smartPute, Player *target);
+
 void print_tab(int *tab);
 
 int check(char c, int is_player);
@@ -29,6 +33,8 @@ int check(char c, int is_player);
 int game(char **map, Entity *entity, Config *config);
 
 void *pute_move(void *args);
+
+void *smartPute_move(void *args);
 
 void *player_move(void *args);
 
@@ -44,7 +50,7 @@ void creat_shotgun_check_thread(char ***map);
 
 void creat_display_thread(char **map, Player *player);
 
-void creat_check_dead_pute(Pute *pute, char ***map);
+void creat_check_dead_pute(Pute *pute, Pute *smartPute,  char ***map);
 
 void *check_dead_pute(void * args);
 

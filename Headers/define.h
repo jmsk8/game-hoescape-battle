@@ -42,6 +42,7 @@ typedef struct
     int size_y;
     int numb_of_pute;
     int numb_of_bush;
+    int numb_of_smartPute;
     int game_speed;
 } Config;
 
@@ -59,6 +60,7 @@ typedef struct Entity
 {
     Player *player;
     Pute *pute;
+    Pute *smartPute;
 } Entity;
 
 typedef struct {
@@ -68,6 +70,8 @@ typedef struct {
 
 typedef struct {
     Pute *pute;
+    Player *player;
+    Pute *smartPute;
     char ***map;
     int game_speed;
 }Pute_args;
