@@ -26,7 +26,7 @@ void creat_smartPute_thread(Entity *entity, Config *config, char ***map)
     smartPute_args->smartPute = entity->smartPute;
     smartPute_args->player = entity->player;
     smartPute_args->map = map;
-    smartPute_args->game_speed = config->game_speed;
+    smartPute_args->game_speed = config->smartPute_speed;
     pthread_create(&smartPute_thread, NULL, smartPute_move,(void *)smartPute_args);
 }
 void creat_display_thread(char **map, Player *player) {

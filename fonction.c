@@ -59,7 +59,7 @@ int check(char c, int is_player)
   }
   else
   {
-    if (c == PUTE || c == MAP_LIMITE || c == SAFE_ZONE || c == SMART_PUTE || c == SMART_PUTE)
+    if (c == PUTE || c == MAP_LIMITE || c == SAFE_ZONE || c == SMART_PUTE || c == SMART_PUTE || c == AMMO)
       return 1;
     else if (c == BUSH)
       return 2;
@@ -234,4 +234,12 @@ int target_tracking(Pute *smartPute, Player *target)
         //4 = droite y++
         
     return (direction);
+}
+
+int find_target(Pute *smartPute, Player *player)
+{
+    int sum = 0;
+    sum += abs(smartPute->coord_x - player->coord_x);
+    sum += abs(smartPute->coord_y - player->coord_y);
+    return (sum);
 }

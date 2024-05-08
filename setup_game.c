@@ -54,6 +54,21 @@ void map_struct(char ***map, Config *config)
         (*map)[x + config->size_x/ 2 -1][3] = SAFE_ZONE;
         x++;
     }
+    x = 0;
+    y = 0;
+
+    while (x <= 1)
+    {
+        while (y <= 2)
+        {
+            (*map)[(config->size_x - 2 ) - x][(config->size_y / 2 - 2) + y] = SAFE_ZONE; 
+            y++;
+        }
+        y = 0;
+        x++;
+    }
+    (*map)[(config->size_x - 2)][(config->size_y / 2) - 1] = FLOWER; 
+
 }
 
 void setup_map_memory(char ***map, Config *config)
@@ -86,14 +101,14 @@ void setup_map_memory(char ***map, Config *config)
 
 void setup_config(Config *config)
 {
-    config->size_x = 26;
-    config->size_y = 42;
+    config->size_x = 30;
+    config->size_y = 60;
     int check = 0;
-    char rep[6];
+    char rep[7];
       while (check == 0)
     {
         printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
-        if (scanf("%5s", rep) != 1) {
+        if (scanf("%7s", rep) != 1) {
             printf("Erreur de saisie. Veuillez réessayer.\n");
             continue;
         }
@@ -119,33 +134,37 @@ void setup_config(Config *config)
     
         if(ft_strcmp(rep,"easy") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y ) / 16);
+            config->numb_of_pute = ((config->size_x * config->size_y ) / 18);
             config->numb_of_bush = ((config->size_x * config->size_y ) / 14);
             config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
-            config->game_speed = 10000;
+            config->game_speed = 1000000 / ((config->size_x * config->size_y ) / 18);
+            config->smartPute_speed = 950000 / ((config->size_x * config->size_y ) / 160);
+
             check = 1;
         }
         else if(ft_strcmp(rep,"normal") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y ) / 13);
+            config->numb_of_pute = ((config->size_x * config->size_y ) / 15);
             config->numb_of_bush = ((config->size_x * config->size_y ) / 12);
             config->numb_of_smartPute = ((config->size_x * config->size_y ) / 120);
-            config->game_speed = 8000;
+            config->game_speed = 900000 / ((config->size_x * config->size_y ) / 18);
+            config->smartPute_speed = 850000 / ((config->size_x * config->size_y ) / 120);
             check = 1;
         }
         else if(ft_strcmp(rep,"hard") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y ) / 10);
+            config->numb_of_pute = ((config->size_x * config->size_y ) / 12);
             config->numb_of_bush = ((config->size_x * config->size_y ) / 8);
             config->numb_of_smartPute = ((config->size_x * config->size_y ) / 90);
-            config->game_speed = 7000;
+            config->game_speed = 600000 / ((config->size_x * config->size_y ) / 18);
+            config->smartPute_speed = 550000 / ((config->size_x * config->size_y ) / 90);
             check = 1;
         }
         else if(ft_strcmp(rep,"test") == 0)
         {
             config->numb_of_pute = 0;
             config->numb_of_bush = 0;
-            config->game_speed = 10000;
+            config->game_speed = 1000000 / ((config->size_x * config->size_y ) / 160);
             config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
             check = 1;
         }
@@ -159,7 +178,7 @@ void setup_game(char ***map, Entity *entity, Config *config)
 {
     setup_config(config);
     setup_map_memory(map, config);
-    entity->player = (Player*)player_spawn(config);
+    entity->player = (Player*)player_spawn(config, map);
     girflfriend_spawn(map, config);
     bush_spawn(map, config);
     pute_spawn(map,&entity->pute, config);

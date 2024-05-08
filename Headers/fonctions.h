@@ -4,7 +4,7 @@
 
 void setup_game(char ***map, Entity *entity, Config *config);
 
-struct Player *player_spawn(Config *config);
+struct Player *player_spawn(Config *config, char ***map);
 
 void map_struct(char ***map, Config *config);
 
@@ -59,5 +59,7 @@ void player_shotgun(Player *player, char ***map,int ch);
 void *shotgun_clear(void *args);
 
 void case_move(char ***map, int *x, int *y, int direction, int is_col);
+
+int find_target(Pute *smartPute, Player *player);
 
 #endif

@@ -32,6 +32,7 @@ void *display_map(void *args)
             y++;
             i++;
         }
+        mvprintw(y + 1, 0, "Nombre de munitions: %d", player->mun);
         refresh();
         usleep(45000);
     }
@@ -77,7 +78,11 @@ void *player_move(void *args)
         case '4':
         case '5':
         case '6':
-            player_shotgun(player, map, ch);
+            if (player->mun > 0)
+            {
+                player_shotgun(player, map, ch);
+                player ->mun -= 1;
+            }
             break;
         }
         usleep(10000);
@@ -101,15 +106,9 @@ void *pute_move(void *args)
     {
         while (current != NULL)
         {
-            (*map)[current->coord_x][current->coord_y] = ' ';
-            if (!current->is_alive)
+            if (current->is_alive)
             {
-                current->coord_x = 0;
-                current->coord_x = 0;
-                (*map)[current->coord_x][current->coord_y] = MAP_LIMITE;
-            }
-            else
-            {
+                (*map)[current->coord_x][current->coord_y] = ' ';
                 direction = rand() % 4;
                 x = current->coord_x;
                 y = current->coord_y;
@@ -147,6 +146,7 @@ void *smartPute_move(void *args)
 {
     char ***map;
     int direction;
+    unsigned int seed = time(NULL);
     int x;
     int y;
     Pute_args *smartPutes_args = (Pute_args *)args;
@@ -159,16 +159,13 @@ void *smartPute_move(void *args)
     {
         while (current != NULL)
         {
-            (*map)[current->coord_x][current->coord_y] = ' ';
-            if (!current->is_alive)
+            if (current->is_alive)
             {
-                current->coord_x = 0;
-                current->coord_x = 0;
-                (*map)[current->coord_x][current->coord_y] = MAP_LIMITE;
-            }
-            else
-            {
-                direction = target_tracking(current, player);
+                (*map)[current->coord_x][current->coord_y] = ' ';
+                if (find_target(current, player) <= 15)
+                    direction = target_tracking(current, player);
+                else
+                    direction = rand_r(&seed) % 4 + 1;
                 x = current->coord_x;
                 y = current->coord_y;
                 switch (direction)
@@ -196,7 +193,7 @@ void *smartPute_move(void *args)
                 (*map)[x][y] = SMART_PUTE;
             }
             current = current->next;
-            usleep(speed*10);
+            usleep(speed);
         }
         current = head;
     }
@@ -204,31 +201,42 @@ void *smartPute_move(void *args)
     pthread_exit(NULL);
 }
 
-int checkpos(Player *player, Pute *pute, Pute*smartPute, Config *config)
+int checkpos(Entity *entity, Config *config, char ***map)
 {
     int x;
     int y;
-    Pute *current_pute = pute;
-    Pute *current_smartPute = smartPute;
+    Pute *current_pute = entity->pute;
+    Pute *current_smartPute = entity->smartPute;
+    Player *player = entity->player;
 
     x = player->coord_x;
     y = player->coord_y;
+    if ((*map)[x][y] == AMMO)
+    {
+        (*map)[x][y] = ' ';
+        player->mun += 5;
+    }
+    if ((*map)[x][y] == FLOWER)
+        player->flower = 1;
     if (x == config->size_x  / 2 && y == config->size_y - 7)
-        return (2);
+    {
+        if (player->flower)
+            return (2);
+        else
+            return (0);
+    }
     while (current_pute != NULL)
     {
         if (x == current_pute->coord_x && y == current_pute->coord_y)
             return (0);
         current_pute = current_pute->next;
     }
-
     while (current_smartPute != NULL)
     {
         if (x == current_smartPute->coord_x && y == current_smartPute->coord_y)
             return (0);
         current_smartPute = current_smartPute->next;
     }
-       
         return (1);
 }
 
@@ -275,14 +283,23 @@ void *check_dead_pute(void *args)
         while (pute != NULL)
         {
             if ((*map)[pute->coord_x][pute->coord_y] == BULLET)
+            {
                 pute->is_alive = 0;
+                pute->coord_x = 0;
+                pute->coord_y = 0;
+            }
             pute = pute->next;
         }
 
         while (smartPute != NULL)
         {
             if ((*map)[smartPute->coord_x][smartPute->coord_y] == BULLET)
+            {
+                (*map)[smartPute->coord_x][smartPute->coord_y] = AMMO;
                 smartPute->is_alive = 0;
+                smartPute->coord_x = 0;
+                smartPute->coord_y = 0;
+            }
             smartPute = smartPute->next;
         }
         pute = pute_head;
@@ -296,7 +313,7 @@ int game(char **map, Entity *entity, Config *config) {
     creat_threads(config,entity, &map);
     while (check == 1 && flag == 1) {
         map_struct(&map, config);
-        check = checkpos(entity->player, entity->pute, entity->smartPute, config);
+        check = checkpos(entity, config, &map);
         usleep(10);
     } 
     flag = 0;

@@ -1,7 +1,7 @@
 #include  "Headers/fonctions.h"
 #include  "Headers/define.h"
 
-struct Player *player_spawn(Config *config)
+struct Player *player_spawn(Config *config, char ***map)
 {
     Player *newplayer = malloc(sizeof(Player));
     if (newplayer == NULL) {
@@ -10,6 +10,9 @@ struct Player *player_spawn(Config *config)
     }
     newplayer->coord_x = config->size_x / 2;
     newplayer->coord_y = 4;
+    (*map)[newplayer->coord_x][newplayer->coord_y] = '*';
+    newplayer->mun = 10;
+    newplayer->flower = 0;
     return newplayer; 
 }
 

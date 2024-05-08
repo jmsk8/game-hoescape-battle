@@ -17,7 +17,9 @@
 #define PUTE_PLAYER 49
 #define SAFE_ZONE 'X'
 #define MAP_LIMITE '0'
+#define FLOWER '*'
 #define BULLET 'x'
+#define AMMO 'I'
 
 
 #define LEFT 'q'
@@ -34,6 +36,8 @@ typedef struct Player
 {
     int coord_x;
     int coord_y;
+    int mun;
+    int flower;
 } Player;
 
 typedef struct
@@ -44,6 +48,7 @@ typedef struct
     int numb_of_bush;
     int numb_of_smartPute;
     int game_speed;
+    int smartPute_speed;
 } Config;
 
 typedef struct Pute
