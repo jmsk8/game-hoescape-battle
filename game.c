@@ -101,13 +101,13 @@ void *pute_move(void *args)
     Pute *current = putes_args->pute;
     Pute *head = putes_args->pute;
     map = putes_args->map;
-    int speed = putes_args->game_speed;
     while (flag)
     {
         while (current != NULL)
         {
             if (current->is_alive)
             {
+                (*map)[current->coord_x][current->coord_y] = ' ';
                 (*map)[current->coord_x][current->coord_y] = ' ';
                 direction = rand() % 4;
                 x = current->coord_x;
@@ -134,7 +134,8 @@ void *pute_move(void *args)
                 (*map)[x][y] = PUTE;
             }
             current = current->next;
-            usleep(speed);
+            if (current != NULL)
+                usleep(current->speed);
         }
         current = head;
     }
@@ -154,7 +155,7 @@ void *smartPute_move(void *args)
     Pute *head = smartPutes_args->smartPute;
     Player *player = smartPutes_args->player;
     map = smartPutes_args->map;
-    int speed = smartPutes_args->game_speed;
+
     while (flag)
     {
         while (current != NULL)
@@ -193,7 +194,8 @@ void *smartPute_move(void *args)
                 (*map)[x][y] = SMART_PUTE;
             }
             current = current->next;
-            usleep(speed);
+            if (current != NULL)
+                usleep(current->speed);
         }
         current = head;
     }
@@ -308,15 +310,16 @@ void *check_dead_pute(void *args)
     }
 }
 
-int game(char **map, Entity *entity, Config *config) {
-    int check = 1;
+void game(char **map, Entity *entity, Config *config, Result *result) 
+{
+    result->check = 1;
     creat_threads(config,entity, &map);
-    while (check == 1 && flag == 1) {
+    while (result->check == 1 && flag == 1) {
         map_struct(&map, config);
-        check = checkpos(entity, config, &map);
+        result->check = checkpos(entity, config, &map);
+        result->score += 0.0065;
         usleep(10);
     } 
     flag = 0;
     endwin();
-    return (check);
 }

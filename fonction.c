@@ -11,20 +11,21 @@ int ft_strcmp(char *s1, char*s2)
     return (*s1 - *s2);
 }
 
-struct Pute *creatPute (int x, int y, int id)
+struct Pute *creatPute (int x, int y, int speed)
 {
   Pute *newPute = malloc (sizeof (Pute));
   newPute->coord_x = x;
   newPute->coord_y = y;
-  newPute->id = id;
+  newPute->speed = speed;
   newPute->next = NULL;
   return newPute;
 }
 
-void pushPute (Pute **head, int x, int y, int id)
+void pushPute (Pute **head, int x, int y, int speed)
 {
-  Pute *newpute = creatPute (x, y, id);
+  Pute *newpute = creatPute (x, y, speed);
   newpute->is_alive = 1;
+
   if (*head == NULL)
 	{
 	  *head = newpute;
@@ -128,9 +129,11 @@ void player_shotgun(Player *player, char ***map, int ch)
                 {
                     (*map)[player->coord_x - bullet][player->coord_y] = BULLET;
                     if ((!check((*map)[player->coord_x - 2][player->coord_y + 1], 1)))
-                        (*map)[player->coord_x - bullet][player->coord_y + 1] = BULLET;
+                        if ((!check((*map)[player->coord_x - 1][player->coord_y + 1], 1)))
+                            (*map)[player->coord_x - bullet][player->coord_y + 1] = BULLET;
                     if ((!check((*map)[player->coord_x - 2][player->coord_y - 1], 1)))
-                        (*map)[player->coord_x - bullet][player->coord_y - 1] = BULLET;
+                        if ((!check((*map)[player->coord_x - 1][player->coord_y  - 1], 1)))
+                            (*map)[player->coord_x - bullet][player->coord_y - 1] = BULLET;
                 }
                 else if ((!check((*map)[player->coord_x - bullet][player->coord_y], 1)))
                     (*map)[player->coord_x - bullet][player->coord_y] = BULLET;
@@ -147,9 +150,11 @@ void player_shotgun(Player *player, char ***map, int ch)
                 {
                     (*map)[player->coord_x + bullet][player->coord_y] = BULLET;
                     if ((!check((*map)[player->coord_x + 2][player->coord_y + 1], 1)))
-                        (*map)[player->coord_x + bullet][player->coord_y + 1] = BULLET;
+                        if ((!check((*map)[player->coord_x + 1][player->coord_y + 1], 1)))
+                            (*map)[player->coord_x + bullet][player->coord_y + 1] = BULLET;
                     if ((!check((*map)[player->coord_x + 2][player->coord_y - 1], 1)))
-                        (*map)[player->coord_x + bullet][player->coord_y - 1] = BULLET;
+                        if ((!check((*map)[player->coord_x + 1][player->coord_y - 1], 1)))
+                            (*map)[player->coord_x + bullet][player->coord_y - 1] = BULLET;
                 }
                 else if ((!check((*map)[player->coord_x + bullet][player->coord_y], 1)))
                     (*map)[player->coord_x + bullet][player->coord_y] = BULLET;
@@ -166,9 +171,11 @@ void player_shotgun(Player *player, char ***map, int ch)
                 {
                     (*map)[player->coord_x][player->coord_y - bullet] = BULLET;
                     if ((!check((*map)[player->coord_x + 1][player->coord_y - bullet], 1)))
-                        (*map)[player->coord_x + 1][player->coord_y - bullet] = BULLET;
+                        if ((!check((*map)[player->coord_x +1][player->coord_y - 1], 1)))
+                            (*map)[player->coord_x + 1][player->coord_y - bullet] = BULLET;
                     if ((!check((*map)[player->coord_x - 1][player->coord_y - bullet], 1)))
-                        (*map)[player->coord_x - 1][player->coord_y - bullet] = BULLET;
+                        if ((!check((*map)[player->coord_x - 1][player->coord_y - 1], 1)))
+                            (*map)[player->coord_x - 1][player->coord_y - bullet] = BULLET;
                 }
                 else if ((!check((*map)[player->coord_x][player->coord_y - bullet], 1)))
                     (*map)[player->coord_x][player->coord_y - bullet] = BULLET;
@@ -185,9 +192,11 @@ void player_shotgun(Player *player, char ***map, int ch)
                 {
                     (*map)[player->coord_x][player->coord_y + bullet] = BULLET;
                     if ((!check((*map)[player->coord_x + 1][player->coord_y + bullet], 1)))
-                        (*map)[player->coord_x + 1][player->coord_y + bullet] = BULLET;
+                        if ((!check((*map)[player->coord_x + 1][player->coord_y + 1], 1)))
+                            (*map)[player->coord_x + 1][player->coord_y + bullet] = BULLET;
                     if ((!check((*map)[player->coord_x - 1][player->coord_y + bullet], 1)))
-                        (*map)[player->coord_x - 1][player->coord_y + bullet] = BULLET;
+                        if ((!check((*map)[player->coord_x - 1][player->coord_y + 1], 1)))
+                            (*map)[player->coord_x - 1][player->coord_y + bullet] = BULLET;
                 }
                 else if ((!check((*map)[player->coord_x][player->coord_y + bullet], 1)))
                     (*map)[player->coord_x][player->coord_y + bullet] = BULLET;

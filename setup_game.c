@@ -101,8 +101,8 @@ void setup_map_memory(char ***map, Config *config)
 
 void setup_config(Config *config)
 {
-    config->size_x = 30;
-    config->size_y = 60;
+    config->size_x = 40;
+    config->size_y = 80;
     int check = 0;
     char rep[7];
       while (check == 0)
@@ -134,37 +134,37 @@ void setup_config(Config *config)
     
         if(ft_strcmp(rep,"easy") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y ) / 18);
+            config->numb_of_pute = ((config->size_x * config->size_y ) / 16);
             config->numb_of_bush = ((config->size_x * config->size_y ) / 14);
             config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
-            config->game_speed = 1000000 / ((config->size_x * config->size_y ) / 18);
-            config->smartPute_speed = 950000 / ((config->size_x * config->size_y ) / 160);
+            config->game_speed = 1000000 / ((config->size_x * config->size_y ) / 16);
+            config->smartPute_speed = 900000 / ((config->size_x * config->size_y ) / 160);
 
             check = 1;
         }
         else if(ft_strcmp(rep,"normal") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y ) / 15);
+            config->numb_of_pute = ((config->size_x * config->size_y ) / 14);
             config->numb_of_bush = ((config->size_x * config->size_y ) / 12);
-            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 120);
-            config->game_speed = 900000 / ((config->size_x * config->size_y ) / 18);
-            config->smartPute_speed = 850000 / ((config->size_x * config->size_y ) / 120);
+            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 140);
+            config->game_speed = 900000 / ((config->size_x * config->size_y ) / 14);
+            config->smartPute_speed = 800000 / ((config->size_x * config->size_y ) / 140);
             check = 1;
         }
         else if(ft_strcmp(rep,"hard") == 0)
         {
             config->numb_of_pute = ((config->size_x * config->size_y ) / 12);
-            config->numb_of_bush = ((config->size_x * config->size_y ) / 8);
-            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 90);
-            config->game_speed = 600000 / ((config->size_x * config->size_y ) / 18);
-            config->smartPute_speed = 550000 / ((config->size_x * config->size_y ) / 90);
+            config->numb_of_bush = ((config->size_x * config->size_y ) / 10);
+            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 120);
+            config->game_speed = 800000 / ((config->size_x * config->size_y ) / 12);
+            config->smartPute_speed = 700000 / ((config->size_x * config->size_y ) / 120);
             check = 1;
         }
         else if(ft_strcmp(rep,"test") == 0)
         {
             config->numb_of_pute = 0;
             config->numb_of_bush = 0;
-            config->game_speed = 1000000 / ((config->size_x * config->size_y ) / 160);
+            config->smartPute_speed = 1000000 / ((config->size_x * config->size_y ) / 160);
             config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
             check = 1;
         }

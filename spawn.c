@@ -52,7 +52,7 @@ void pute_spawn(char ***map, Pute **pute, Config *config)
     while(i < config->numb_of_pute)
 	{
 	    coord_generator (map, &x, &y, config);
-	    pushPute (pute, x, y, i);
+	    pushPute (pute, x, y, config->game_speed);
 	    (*map)[x][y] = PUTE;
         i++;
 	}
@@ -68,7 +68,7 @@ void smartPute_spawn(char ***map, Pute **smartPute, Config *config)
     while(i < config->numb_of_smartPute)
 	{
 	    coord_generator (map, &x, &y, config);
-	    pushPute (smartPute, x, y, i);
+	    pushPute (smartPute, x, y, config->smartPute_speed);
 	    (*map)[x][y] = SMART_PUTE;
         i++;
 	}

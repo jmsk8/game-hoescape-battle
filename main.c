@@ -17,12 +17,13 @@ int main(void)
     int check;
     Entity *entity = malloc(sizeof(Entity));
     Config *config = malloc(sizeof(Config));
+    Result *result = malloc(sizeof(Result));
     setup_game(&map, entity, config);
-    check = game(map, entity, config);
-    if (check == 0)
+    game(map, entity, config, result);
+    if (result->check == 0)
         print_result();
-    else if (check == 2)
-        printf("gagné\n");
+    else if (result->check == 2)
+        printf("gagné, score : %f\n", result->score);
     free(map);
     free(entity);
     free(config);

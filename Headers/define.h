@@ -32,6 +32,12 @@
 #define CONTINUE 1
 #define CONTAMINE - 2
 
+typedef struct result
+{
+    int check;
+    float score;
+}  Result;
+
 typedef struct Player
 {
     int coord_x;
@@ -56,6 +62,7 @@ typedef struct Pute
     int coord_x;
     int coord_y;
     int is_alive;
+    int speed;
     int id;
     struct Pute *next;
    
@@ -78,7 +85,6 @@ typedef struct {
     Player *player;
     Pute *smartPute;
     char ***map;
-    int game_speed;
 }Pute_args;
 
 typedef struct {

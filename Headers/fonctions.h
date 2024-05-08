@@ -18,7 +18,7 @@ void smartPute_spawn(char ***map, Pute **smartPute, Config *config);
 
 void coord_generator (char ***map, int *x, int *y, Config *config);
 
-void pushPute (Pute **head, int x, int y, int id);
+void pushPute (Pute **head, int x, int y, int speed);
 
 void ft_range(int ***tab, int min, int max);
 
@@ -30,7 +30,7 @@ void print_tab(int *tab);
 
 int check(char c, int is_player);
 
-int game(char **map, Entity *entity, Config *config);
+void game(char **map, Entity *entity, Config *config, Result *result);
 
 void *pute_move(void *args);
 

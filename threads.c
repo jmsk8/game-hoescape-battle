@@ -15,7 +15,6 @@ void create_pute_thread(Entity *entity, char ***map, Config *config)
     Pute_args *putes_args = (Pute_args *)malloc(sizeof(Pute_args));
     putes_args->pute = entity->pute;
     putes_args->map = map;
-    putes_args->game_speed = config->game_speed;
     pthread_create(&putes_thread, NULL, pute_move,(void *)putes_args);
 }
 
@@ -26,7 +25,6 @@ void creat_smartPute_thread(Entity *entity, Config *config, char ***map)
     smartPute_args->smartPute = entity->smartPute;
     smartPute_args->player = entity->player;
     smartPute_args->map = map;
-    smartPute_args->game_speed = config->smartPute_speed;
     pthread_create(&smartPute_thread, NULL, smartPute_move,(void *)smartPute_args);
 }
 void creat_display_thread(char **map, Player *player) {
