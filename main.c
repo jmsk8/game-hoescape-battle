@@ -57,6 +57,8 @@ int main(void)
     {
         char **map;
         Entity *entity = malloc(sizeof(Entity));
+        entity->pute = NULL;
+        entity->smartPute = NULL;
         Config *config = malloc(sizeof(Config));
         Result *result = malloc(sizeof(Result));
         setup_game(&map, entity, config);
