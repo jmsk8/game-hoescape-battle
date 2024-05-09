@@ -13,7 +13,7 @@ int ft_strcmp(char *s1, char*s2)
 
 struct Pute *creatPute (int x, int y, int speed)
 {
-  Pute *newPute = malloc (sizeof (Pute));
+  Pute *newPute = malloc (sizeof(Pute));
   newPute->coord_x = x;
   newPute->coord_y = y;
   newPute->speed = speed;
@@ -21,22 +21,20 @@ struct Pute *creatPute (int x, int y, int speed)
   return newPute;
 }
 
-void pushPute (Pute **head, int x, int y, int speed)
-{
-  Pute *newpute = creatPute (x, y, speed);
-  newpute->is_alive = 1;
+void pushPute(Pute **head, int x, int y, int speed) {
+    Pute *newpute = creatPute(x, y, speed);
+    newpute->is_alive = 1;
 
-  if (*head == NULL)
-	{
-	  *head = newpute;
-	  return;
-	}
-  Pute *current = *head;
-  while (current->next != NULL)
-	{
-	  current = current->next;
-	}
-  current->next = newpute;
+    if (*head == NULL) {
+        *head = newpute;
+        return;
+    }
+    Pute *current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+
+    current->next = newpute; 
 }
 
 void coord_generator(char ***map, int *x, int *y, Config *config)

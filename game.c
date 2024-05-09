@@ -20,7 +20,6 @@ void *display_map(void *args)
 
             while (map[i][j] != '\0')
             {
-                // Vérifier si les coordonnées actuelles correspondent à celles du joueur
                 if (i == player->coord_x && j == player->coord_y) {
                     mvprintw(y, x, PLAYER);
                 } else {
@@ -36,6 +35,7 @@ void *display_map(void *args)
         refresh();
         usleep(45000);
     }
+    free(display_args);
     pthread_exit(NULL);
 }
 
@@ -107,7 +107,6 @@ void *pute_move(void *args)
         {
             if (current->is_alive)
             {
-                (*map)[current->coord_x][current->coord_y] = ' ';
                 (*map)[current->coord_x][current->coord_y] = ' ';
                 direction = rand() % 4;
                 x = current->coord_x;
@@ -279,7 +278,6 @@ void *check_dead_pute(void *args)
     Pute *pute_head = pute;
     Pute *smartPute_head = smartPute;
     char ***map = pute_args->map;
-
     while (flag)
     {
         while (pute != NULL)
@@ -292,7 +290,6 @@ void *check_dead_pute(void *args)
             }
             pute = pute->next;
         }
-
         while (smartPute != NULL)
         {
             if ((*map)[smartPute->coord_x][smartPute->coord_y] == BULLET)
@@ -308,18 +305,25 @@ void *check_dead_pute(void *args)
         smartPute = smartPute_head;
         usleep(10);
     }
+    free(pute_args);
+    pthread_exit(NULL);
 }
 
 void game(char **map, Entity *entity, Config *config, Result *result) 
 {
+    flag = 1;
     result->check = 1;
-    creat_threads(config,entity, &map);
-    while (result->check == 1 && flag == 1) {
+    pthread_t threads[NUM_OF_THREAD];
+    creat_threads(entity, &map, threads);
+    while (result->check == 1 && flag != 0) {
         map_struct(&map, config);
         result->check = checkpos(entity, config, &map);
         result->score += 0.0065;
         usleep(10);
     } 
     flag = 0;
-    endwin();
+     for (int i = 0; i < NUM_OF_THREAD; i++) {
+        pthread_join(threads[i], NULL);
+        printf("%d\n", i);
+    }
 }

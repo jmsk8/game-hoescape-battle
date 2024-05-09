@@ -40,17 +40,7 @@ void *player_move(void *args);
 
 void *display_map(void *args);
 
-void creat_threads(Config *config, Entity * entity, char ***map);
-
-void create_player_thread(Entity *entity, char ***map);
-
-void create_pute_thread(Entity *entity, char ***map, Config *config);
-
-void creat_shotgun_check_thread(char ***map);
-
-void creat_display_thread(char **map, Player *player);
-
-void creat_check_dead_pute(Pute *pute, Pute *smartPute,  char ***map);
+void creat_threads(Entity *entity, char ***map, pthread_t *threads);
 
 void *check_dead_pute(void * args);
 

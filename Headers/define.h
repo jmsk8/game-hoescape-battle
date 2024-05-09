@@ -32,6 +32,8 @@
 #define CONTINUE 1
 #define CONTAMINE - 2
 
+#define NUM_OF_THREAD 6
+
 typedef struct result
 {
     int check;

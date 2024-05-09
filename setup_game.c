@@ -73,28 +73,22 @@ void map_struct(char ***map, Config *config)
 
 void setup_map_memory(char ***map, Config *config)
 {
-    int i = 0;
 
     *map = malloc(sizeof(char*) * config->size_x);
     if (*map == NULL) {
         fprintf(stderr, "Erreur lors de l'allocation de mémoire.\n");
         exit(EXIT_FAILURE);
     }
-
-    while (i < config->size_x) {
-        (*map)[i] = malloc(sizeof(char) * config->size_y + 1);
+    for (int i = 0; i < config->size_x; i++) {
+        (*map)[i] = malloc(sizeof(char) * (config->size_y + 1));
         if ((*map)[i] == NULL) {
             fprintf(stderr, "Erreur lors de l'allocation de mémoire.\n");
             exit(EXIT_FAILURE);
         }
-
-        int j = 0;
-        while (j < config->size_y) {
+        for (int j = 0; j < config->size_y; j++) {
             (*map)[i][j] = ' ';
-            j++;
         }
-        (*map)[i][j] = '\0'; 
-        i++;
+        (*map)[i][config->size_y] = '\0'; 
     }
     map_struct(map, config);
 }
@@ -104,15 +98,15 @@ void setup_config(Config *config)
     config->size_x = 40;
     config->size_y = 80;
     int check = 0;
-    char rep[7];
+    char *rep = "easy";
       while (check == 0)
     {
-        printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
+        /*printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
         if (scanf("%7s", rep) != 1) {
             printf("Erreur de saisie. Veuillez réessayer.\n");
             continue;
         }
-
+    */
         if(ft_strcmp(rep,"size") == 0)
         {
             printf("Entrez la taille x : ");
@@ -175,13 +169,13 @@ void setup_config(Config *config)
 }
 
 void setup_game(char ***map, Entity *entity, Config *config)
-{
+{   
     setup_config(config);
     setup_map_memory(map, config);
     entity->player = (Player*)player_spawn(config, map);
     girflfriend_spawn(map, config);
-    bush_spawn(map, config);
     pute_spawn(map,&entity->pute, config);
+    bush_spawn(map, config);
     smartPute_spawn(map,&entity->smartPute,config);
     initscr();
     noecho();

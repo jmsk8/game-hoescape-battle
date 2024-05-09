@@ -10,7 +10,7 @@ struct Player *player_spawn(Config *config, char ***map)
     }
     newplayer->coord_x = config->size_x / 2;
     newplayer->coord_y = 4;
-    (*map)[newplayer->coord_x][newplayer->coord_y] = '*';
+    (*map)[newplayer->coord_x][newplayer->coord_y] = 'o';
     newplayer->mun = 10;
     newplayer->flower = 0;
     return newplayer; 
@@ -49,14 +49,15 @@ void pute_spawn(char ***map, Pute **pute, Config *config)
     int i;
 
     i = 0;
-    while(i < config->numb_of_pute)
-	{
-	    coord_generator (map, &x, &y, config);
-	    pushPute (pute, x, y, config->game_speed);
-	    (*map)[x][y] = PUTE;
+    while (i < config->numb_of_pute)
+    {
+        coord_generator(map, &x, &y, config);
+        pushPute(pute, x, y, config->game_speed);
+        (*map)[x][y] = PUTE;
         i++;
-	}
+    }
 }
+
 
 void smartPute_spawn(char ***map, Pute **smartPute, Config *config)
 {
@@ -65,11 +66,15 @@ void smartPute_spawn(char ***map, Pute **smartPute, Config *config)
     int i;
 
     i = 0;
+    printf("num of pute %d\n", config->numb_of_smartPute);
     while(i < config->numb_of_smartPute)
 	{
 	    coord_generator (map, &x, &y, config);
+        //printf("check 1\n");
 	    pushPute (smartPute, x, y, config->smartPute_speed);
+        //printf("check 2\n");
 	    (*map)[x][y] = SMART_PUTE;
         i++;
+        printf("put num %d\n", i);
 	}
 }
