@@ -66,15 +66,11 @@ void smartPute_spawn(char ***map, Pute **smartPute, Config *config)
     int i;
 
     i = 0;
-    printf("num of pute %d\n", config->numb_of_smartPute);
     while(i < config->numb_of_smartPute)
 	{
 	    coord_generator (map, &x, &y, config);
-        //printf("check 1\n");
-	    pushPute (smartPute, x, y, config->smartPute_speed);
-        //printf("check 2\n");
+        pushPute (smartPute, x, y, config->smartPute_speed);
 	    (*map)[x][y] = SMART_PUTE;
         i++;
-        printf("put num %d\n", i);
 	}
 }

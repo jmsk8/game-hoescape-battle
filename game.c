@@ -324,6 +324,6 @@ void game(char **map, Entity *entity, Config *config, Result *result)
     flag = 0;
      for (int i = 0; i < NUM_OF_THREAD; i++) {
         pthread_join(threads[i], NULL);
-        printf("%d\n", i);
     }
+    endwin();
 }

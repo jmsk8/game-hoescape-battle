@@ -98,15 +98,14 @@ void setup_config(Config *config)
     config->size_x = 40;
     config->size_y = 80;
     int check = 0;
-    char *rep = "easy";
+    char rep[7];
       while (check == 0)
     {
-        /*printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
+        printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
         if (scanf("%7s", rep) != 1) {
             printf("Erreur de saisie. Veuillez réessayer.\n");
             continue;
         }
-    */
         if(ft_strcmp(rep,"size") == 0)
         {
             printf("Entrez la taille x : ");
@@ -119,11 +118,6 @@ void setup_config(Config *config)
                 printf("Erreur de saisie. Veuillez réessayer.\n");
                 continue;
             }
-            printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
-            if (scanf("%5s", rep) != 1) {
-                printf("Erreur de saisie. Veuillez réessayer.\n");
-                continue;
-            }
         }
     
         if(ft_strcmp(rep,"easy") == 0)
@@ -133,7 +127,6 @@ void setup_config(Config *config)
             config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
             config->game_speed = 1000000 / ((config->size_x * config->size_y ) / 16);
             config->smartPute_speed = 900000 / ((config->size_x * config->size_y ) / 160);
-
             check = 1;
         }
         else if(ft_strcmp(rep,"normal") == 0)
@@ -174,8 +167,8 @@ void setup_game(char ***map, Entity *entity, Config *config)
     setup_map_memory(map, config);
     entity->player = (Player*)player_spawn(config, map);
     girflfriend_spawn(map, config);
-    pute_spawn(map,&entity->pute, config);
     bush_spawn(map, config);
+    pute_spawn(map,&entity->pute, config);
     smartPute_spawn(map,&entity->smartPute,config);
     initscr();
     noecho();
