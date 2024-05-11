@@ -52,4 +52,6 @@ void case_move(char ***map, int *x, int *y, int direction, int is_col);
 
 int find_target(Pute *smartPute, Player *player);
 
+void read_file_to_map(char ***map, int x, int y, int map_num, int lvl);
+
 #endif

@@ -316,7 +316,8 @@ void game(char **map, Entity *entity, Config *config, Result *result)
     pthread_t threads[NUM_OF_THREAD];
     creat_threads(entity, &map, threads);
     while (result->check == 1 && flag != 0) {
-        map_struct(&map, config);
+        if (!config->is_adventure_mod)
+            map_struct(&map, config);
         result->check = checkpos(entity, config, &map);
         result->score += 0.0065;
         usleep(10);

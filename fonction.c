@@ -33,7 +33,6 @@ void pushPute(Pute **head, int x, int y, int speed) {
     while (current->next) {
         current = current->next;
     }
-
     current->next = newpute; 
 }
 
@@ -249,4 +248,20 @@ int find_target(Pute *smartPute, Player *player)
     sum += abs(smartPute->coord_x - player->coord_x);
     sum += abs(smartPute->coord_y - player->coord_y);
     return (sum);
+}
+
+void read_file_to_map(char ***map, int x, int y, int map_num, int lvl) {
+    char filename[40];
+    sprintf(filename, "map%d.txt", map_num);
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Impossible d'ouvrir le fichier %s.\n", filename);
+        exit(1);
+    }
+    int line_count = 0;
+    while (fgets(file, y, file)!= NULL) {
+        strcpy((*map)[line_count], file);
+        line_count++;
+    }
+    fclose(file);
 }

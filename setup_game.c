@@ -74,12 +74,12 @@ void map_struct(char ***map, Config *config)
 void setup_map_memory(char ***map, Config *config)
 {
 
-    *map = malloc(sizeof(char*) * config->size_x);
+    *map = malloc(sizeof(char*) * (config->size_x * 2));
     if (*map == NULL) {
         fprintf(stderr, "Erreur lors de l'allocation de mémoire.\n");
         exit(EXIT_FAILURE);
     }
-    for (int i = 0; i < config->size_x; i++) {
+    for (int i = 0; i < (config->size_x * 2); i++) {
         (*map)[i] = malloc(sizeof(char) * (config->size_y + 1));
         if ((*map)[i] == NULL) {
             fprintf(stderr, "Erreur lors de l'allocation de mémoire.\n");
@@ -90,87 +90,118 @@ void setup_map_memory(char ***map, Config *config)
         }
         (*map)[i][config->size_y] = '\0'; 
     }
-    map_struct(map, config);
+    if (!config->is_adventure_mod)
+        map_struct(map, config);
 }
 
 void setup_config(Config *config)
 {
-    config->size_x = 40;
-    config->size_y = 80;
     int check = 0;
     char rep[7];
-      while (check == 0)
+    config->size_x = 40;
+    config->size_y = 80;
+
+    while (check == 0)
     {
-        printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
-        if (scanf("%7s", rep) != 1) {
+
+        printf("fait 1 pour le mode aventure, ou 0 pour le mode generation aleatoir\n");
+        scanf("%d", &(config->is_adventure_mod));
+        if (!(config->is_adventure_mod >= 0) || !(config->is_adventure_mod <= 1))
+        {
             printf("Erreur de saisie. Veuillez réessayer.\n");
             continue;
         }
-        if(ft_strcmp(rep,"size") == 0)
+
+        printf("quel mode de difficulté maggle? [easy,normal,hard] || tapez [size] pour donner une taille de map perso. pair uniquement, et pas en dessous de 20 sur 20\n");
+        if (scanf("%7s", rep) != 1)
+        {
+            printf("Erreur de saisie. Veuillez réessayer.\n");
+            continue;
+        }
+        if (ft_strcmp(rep, "size") == 0)
         {
             printf("Entrez la taille x : ");
-            if (scanf("%d", &(config->size_x)) != 1) {
+            if (scanf("%d", &(config->size_x)) != 1)
+            {
                 printf("Erreur de saisie. Veuillez réessayer.\n");
                 continue;
             }
             printf("Entrez la taille y : ");
-            if (scanf("%d", &(config->size_y)) != 1) {
+            if (scanf("%d", &(config->size_y)) != 1)
+            {
                 printf("Erreur de saisie. Veuillez réessayer.\n");
                 continue;
             }
         }
-    
-        if(ft_strcmp(rep,"easy") == 0)
+        if (ft_strcmp(rep, "easy") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y ) / 16);
-            config->numb_of_bush = ((config->size_x * config->size_y ) / 14);
-            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
-            config->game_speed = 1000000 / ((config->size_x * config->size_y ) / 16);
-            config->smartPute_speed = 900000 / ((config->size_x * config->size_y ) / 160);
+            config->numb_of_pute = ((config->size_x * config->size_y) / 16);
+            config->numb_of_bush = ((config->size_x * config->size_y) / 14);
+            config->numb_of_smartPute = ((config->size_x * config->size_y) / 160);
+            config->game_speed = 1000000 / ((config->size_x * config->size_y) / 16);
+            config->smartPute_speed = 900000 / ((config->size_x * config->size_y) / 160);
             check = 1;
         }
-        else if(ft_strcmp(rep,"normal") == 0)
+        else if (ft_strcmp(rep, "normal") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y ) / 14);
-            config->numb_of_bush = ((config->size_x * config->size_y ) / 12);
-            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 140);
-            config->game_speed = 900000 / ((config->size_x * config->size_y ) / 14);
-            config->smartPute_speed = 800000 / ((config->size_x * config->size_y ) / 140);
+            config->numb_of_pute = ((config->size_x * config->size_y) / 14);
+            config->numb_of_bush = ((config->size_x * config->size_y) / 12);
+            config->numb_of_smartPute = ((config->size_x * config->size_y) / 140);
+            config->game_speed = 900000 / ((config->size_x * config->size_y) / 14);
+            config->smartPute_speed = 800000 / ((config->size_x * config->size_y) / 140);
             check = 1;
         }
-        else if(ft_strcmp(rep,"hard") == 0)
+        else if (ft_strcmp(rep, "hard") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y ) / 12);
-            config->numb_of_bush = ((config->size_x * config->size_y ) / 10);
-            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 120);
-            config->game_speed = 800000 / ((config->size_x * config->size_y ) / 12);
-            config->smartPute_speed = 700000 / ((config->size_x * config->size_y ) / 120);
+            config->numb_of_pute = ((config->size_x * config->size_y) / 12);
+            config->numb_of_bush = ((config->size_x * config->size_y) / 10);
+            config->numb_of_smartPute = ((config->size_x * config->size_y) / 120);
+            config->game_speed = 800000 / ((config->size_x * config->size_y) / 12);
+            config->smartPute_speed = 700000 / ((config->size_x * config->size_y) / 120);
             check = 1;
         }
-        else if(ft_strcmp(rep,"test") == 0)
+        else if (ft_strcmp(rep, "test") == 0)
         {
             config->numb_of_pute = 0;
             config->numb_of_bush = 0;
-            config->smartPute_speed = 1000000 / ((config->size_x * config->size_y ) / 160);
-            config->numb_of_smartPute = ((config->size_x * config->size_y ) / 160);
+            config->smartPute_speed = 1000000 / ((config->size_x * config->size_y) / 160);
+            config->numb_of_smartPute = ((config->size_x * config->size_y) / 160);
             check = 1;
         }
         int result = system("clear");
-        if (result == -1) 
+        if (result == -1)
             printf("Erreur lors de l'exécution de la commande 'clear'.\n");
     }
 }
 
-void setup_game(char ***map, Entity *entity, Config *config)
-{   
-    setup_config(config);
-    setup_map_memory(map, config);
-    entity->player = (Player*)player_spawn(config, map);
-    girflfriend_spawn(map, config);
-    bush_spawn(map, config);
-    pute_spawn(map,&entity->pute, config);
-    smartPute_spawn(map,&entity->smartPute,config);
+void setup_adventure_game(char ***map, Entity *entity, Config *config)
+{
+    read_file_to_map(map, SIZE_X, SIZE_Y, 1, 1);
+    //pute_spawn(map,&entity->pute, config);
+    //smartPute_spawn(map,&entity->smartPute,config);
     initscr();
     noecho();
     curs_set(0);
+}
+
+void setup_game(char ***map, Entity *entity, Config *config)
+{
+    setup_config(config);
+    setup_map_memory(map, config);
+    entity->player = (Player *)player_spawn(config, map);
+    if (config->is_adventure_mod)
+    {
+        setup_adventure_game(map, entity, config);
+    }
+
+    else
+    {
+        girflfriend_spawn(map, config);
+        bush_spawn(map, config);
+        pute_spawn(map, &entity->pute, config);
+        smartPute_spawn(map, &entity->smartPute, config);
+        initscr();
+        noecho();
+        curs_set(0);
+    }
 }

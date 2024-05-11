@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
 
 #define BUSH 'o'
 #define PUTE 'h'
@@ -33,6 +34,9 @@
 #define CONTAMINE - 2
 
 #define NUM_OF_THREAD 6
+#define SIZE_X 80
+#define SIZE_Y 80
+
 
 typedef struct result
 {
@@ -57,6 +61,7 @@ typedef struct
     int numb_of_smartPute;
     int game_speed;
     int smartPute_speed;
+    int is_adventure_mod;
 } Config;
 
 typedef struct Pute
