@@ -309,16 +309,36 @@ void *check_dead_pute(void *args)
     pthread_exit(NULL);
 }
 
-void game(char **map, Entity *entity, Config *config, Result *result) 
+void normal_game(char **map, Entity *entity, Config *config, Result *result) 
 {
     flag = 1;
     result->check = 1;
     pthread_t threads[NUM_OF_THREAD];
     creat_threads(entity, &map, threads);
-    while (result->check == 1 && flag != 0) {
-        if (!config->is_adventure_mod)
-            map_struct(&map, config);
+    while (result->check == 1 && flag != 0) 
+    {
+        map_struct(&map, config);
         result->check = checkpos(entity, config, &map);
+        result->score += 0.0065;
+        usleep(10);
+    } 
+    flag = 0;
+     for (int i = 0; i < NUM_OF_THREAD; i++) {
+        pthread_join(threads[i], NULL);
+    }
+    endwin();
+}
+
+void adventur_game(Game *game, Config *config, Result *result) 
+{
+    flag = 1;
+    result->check = 1;
+    pthread_t threads[NUM_OF_THREAD];
+    creat_threads(game->entity, &game->map, threads);
+    while (result->check == 1 && flag != 0) 
+    {
+        map_refresh(&game->map,&game->map_buffer);
+        result->check = checkpos(game->entity, config, &game->map);
         result->score += 0.0065;
         usleep(10);
     } 

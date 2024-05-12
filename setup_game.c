@@ -94,6 +94,73 @@ void setup_map_memory(char ***map, Config *config)
         map_struct(map, config);
 }
 
+void allocate_memory_and_read_file(char ***map, int *x, int *y, int map_num, int lvl) {
+    char filename[40];
+    sprintf(filename, "map/niveau_%d/map%d", lvl, map_num);
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Impossible d'ouvrir le fichier %s.\n", filename);
+        return;
+    }
+
+    *x = 0;
+    *y = 0;
+    char ch;
+    while ((ch = fgetc(file)) != EOF) {
+        if (ch == '\n') {
+            (*x)++;
+        } else {
+            (*y)++;
+        }
+    }
+    fseek(file, 0, SEEK_SET);
+
+    *map = (char **)malloc((*x) * sizeof(char *));
+    if (*map == NULL) {
+        printf("Erreur d'allocation de mémoire pour le tableau de pointeurs.\n");
+        fclose(file);
+        return;
+    }
+    for (int i = 0; i < *x; i++) {
+        (*map)[i] = malloc((*y) + 1);
+        if ((*map)[i] == NULL) {
+            printf("Erreur d'allocation de mémoire pour la ligne %d.\n", i);
+            fclose(file);
+            free(*map);
+            return;
+        }
+        // Lire chaque ligne dans le fichier et copier dans le tableau map
+        if (fgets((*map)[i], *y + 1, file) == NULL) {
+            printf("Erreur lors de la lecture du fichier.\n");
+            fclose(file);
+            free(*map);
+            return;
+        }
+    }
+    fclose(file);
+}
+
+void map_refresh(char ***map, char ***map_buffer)
+{
+    char filename[40];
+    int y;
+    int i;
+
+    i = 0;
+    y = 0;
+    while ((*map)[i] != '\0')
+    {
+        while ((*map)[i][y] != '\0' || y > 80)
+        {
+            if ((*map_buffer)[i][y] == MAP_LIMITE || (*map_buffer)[i][y] == BUSH || (*map_buffer)[i][y] == FLOWER || (*map_buffer)[i][y] == GIRLFRIEND || (*map_buffer)[i][y] == GO_LEFT || (*map_buffer)[i][y] == GO_RIGHT)
+                (*map)[i][y] = (*map_buffer)[i][y];
+            y++;
+        }
+        y = 0;
+        i++;
+    }
+}
+
 void setup_config(Config *config)
 {
     int check = 0;
@@ -174,9 +241,11 @@ void setup_config(Config *config)
     }
 }
 
-void setup_adventure_game(char ***map, Entity *entity, Config *config)
+void setup_adventure_game(Game *game, Config *config)
 {
-    read_file_to_map(map, SIZE_X, SIZE_Y, 1, 1);
+    allocate_memory_and_read_file(&game->map, &config->size_x, &config->size_y, 1, 1);
+    allocate_memory_and_read_file(&game->map_buffer, &config->size_x, &config->size_y, 1, 1);
+    game->entity->player = (Player *)player_spawn(config, &game->map);
     //pute_spawn(map,&entity->pute, config);
     //smartPute_spawn(map,&entity->smartPute,config);
     initscr();
@@ -184,22 +253,22 @@ void setup_adventure_game(char ***map, Entity *entity, Config *config)
     curs_set(0);
 }
 
-void setup_game(char ***map, Entity *entity, Config *config)
+void setup_game(Game *game, Config *config)
 {
     setup_config(config);
-    setup_map_memory(map, config);
-    entity->player = (Player *)player_spawn(config, map);
     if (config->is_adventure_mod)
     {
-        setup_adventure_game(map, entity, config);
+        setup_adventure_game(game, config);
     }
 
     else
     {
-        girflfriend_spawn(map, config);
-        bush_spawn(map, config);
-        pute_spawn(map, &entity->pute, config);
-        smartPute_spawn(map, &entity->smartPute, config);
+        setup_map_memory(&game->map, config);
+        game->entity->player = (Player *)player_spawn(config, &game->map);
+        girflfriend_spawn(&game->map, config);
+        bush_spawn(&game->map, config);
+        pute_spawn(&game->map, &game->entity->pute, config);
+        smartPute_spawn(&game->map, &game->entity->smartPute, config);
         initscr();
         noecho();
         curs_set(0);

@@ -21,6 +21,8 @@
 #define FLOWER '*'
 #define BULLET 'x'
 #define AMMO 'I'
+#define GO_LEFT '<'
+#define GO_RIGHT '>'
 
 
 #define LEFT 'q'
@@ -81,6 +83,17 @@ typedef struct Entity
     Pute *pute;
     Pute *smartPute;
 } Entity;
+
+typedef struct Game
+{
+    char **map;
+    char **map_buffer;
+    struct Entity *prevEntity;
+    struct Entity *entity;
+    struct Entity *nextEntity;
+
+
+}Game;
 
 typedef struct {
     Player *player;

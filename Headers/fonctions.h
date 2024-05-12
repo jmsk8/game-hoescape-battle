@@ -2,7 +2,7 @@
 #define FONCTIONS_H
 #include "define.h"
 
-void setup_game(char ***map, Entity *entity, Config *config);
+void setup_game(Game *game, Config *config);
 
 struct Player *player_spawn(Config *config, char ***map);
 
@@ -30,7 +30,7 @@ void print_tab(int *tab);
 
 int check(char c, int is_player);
 
-void game(char **map, Entity *entity, Config *config, Result *result);
+void normal_game(char **map, Entity *entity, Config *config, Result *result);
 
 void *pute_move(void *args);
 
@@ -53,5 +53,7 @@ void case_move(char ***map, int *x, int *y, int direction, int is_col);
 int find_target(Pute *smartPute, Player *player);
 
 void read_file_to_map(char ***map, int x, int y, int map_num, int lvl);
+
+void map_refresh(char ***map, char ***map_buffer);
 
 #endif

@@ -43,19 +43,25 @@ int main(void)
     int continu = 1;
     while (continu == 1)
     {
-        char **map = NULL;
-        Entity *entity = malloc(sizeof(Entity));
-        entity->pute = NULL;
-        entity->smartPute = NULL;
+        //char **map = NULL;
+        //Entity *entity = malloc(sizeof(Entity));
+        //entity->pute = NULL;
+        //entity->smartPute = NULL;
+        Game *game = malloc(sizeof(Game));
+        game->entity = malloc(sizeof(Entity));
+        game->map = NULL;
+        game->entity->pute = NULL;
+        game->entity->smartPute = NULL;
+        game->map_buffer = NULL;
         Config *config = malloc(sizeof(Config));
         Result *result = malloc(sizeof(Result));
-        setup_game(&map, entity, config);
-        game(map, entity, config, result);
+        setup_game(game, config);
+        normal_game(game->map, game->entity, config, result);
         if (result->check == 0)
             print_result();
         else if (result->check == 2)
             printf("Gagné, score : %f\n", result->score / 100);
-        free_setup(entity, map, config);
+        free_setup(game->entity, game->map, config);
         free(result);
         free(config);
         printf("1 pour restart, 0 pour quitter ");
