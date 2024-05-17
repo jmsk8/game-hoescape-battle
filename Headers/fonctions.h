@@ -8,6 +8,8 @@ struct Player *player_spawn(Config *config, char ***map);
 
 void map_struct(char ***map, Config *config);
 
+void allocate_memory_and_read_file(char ***map, int *x, int *y, int map_num, int lvl);
+
 void girflfriend_spawn(char ***map, Config * config);
 
 void bush_spawn(char ***map, Config *config);
@@ -30,7 +32,9 @@ void print_tab(int *tab);
 
 int check(char c, int is_player);
 
-void normal_game(char **map, Entity *entity, Config *config, Result *result);
+void normal_game(Game *game, Config *config, Result *result);
+
+void adventur_game(Game *game, Config *config, Result *result);
 
 void *pute_move(void *args);
 
@@ -55,5 +59,9 @@ int find_target(Pute *smartPute, Player *player);
 void read_file_to_map(char ***map, int x, int y, int map_num, int lvl);
 
 void map_refresh(char ***map, char ***map_buffer);
+
+void map_copy(char ***map, char ***map_buffer);
+
+void clear_input_buffer();
 
 #endif

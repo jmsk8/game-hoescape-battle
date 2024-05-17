@@ -1,11 +1,13 @@
 
 #include  "Headers/fonctions.h"
 #include  "Headers/define.h"
+
 void print_result()
 {
         FILE *fichier;
     char ligne[1000];
     fichier = fopen("result_print/loose.txt", "r");
+    printf("\033[2J\033[1;1H");
     while (fgets(ligne, sizeof(ligne), fichier) != NULL) {
         printf("%s", ligne);
     }
@@ -41,29 +43,38 @@ void free_setup(Entity *entity, char **map, Config *config)
 int main(void)
 {
     int continu = 1;
+    srand(time(NULL));
     while (continu == 1)
     {
-        //char **map = NULL;
-        //Entity *entity = malloc(sizeof(Entity));
-        //entity->pute = NULL;
-        //entity->smartPute = NULL;
         Game *game = malloc(sizeof(Game));
         game->entity = malloc(sizeof(Entity));
         game->map = NULL;
         game->entity->pute = NULL;
+        //game->entity->pute->next = NULL;
         game->entity->smartPute = NULL;
+        //game->entity->smartPute->next = NULL;
         game->map_buffer = NULL;
+        game->nextEntity = NULL;
+        game->prevEntity = NULL;
         Config *config = malloc(sizeof(Config));
         Result *result = malloc(sizeof(Result));
         setup_game(game, config);
-        normal_game(game->map, game->entity, config, result);
+        if (config->is_adventure_mod)
+        {
+            adventur_game(game, config, result);
+        }
+        else 
+            normal_game(game, config, result);
+        printf("\033[2J\033[1;1H");
         if (result->check == 0)
             print_result();
         else if (result->check == 2)
             printf("Gagné, score : %f\n", result->score / 100);
         free_setup(game->entity, game->map, config);
+        free(game);
         free(result);
         free(config);
+        usleep(1000000);
         printf("1 pour restart, 0 pour quitter ");
         scanf("%d", &continu);
     }

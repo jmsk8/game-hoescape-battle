@@ -11,7 +11,7 @@ struct Player *player_spawn(Config *config, char ***map)
     newplayer->coord_x = config->size_x / 2;
     newplayer->coord_y = 4;
     (*map)[newplayer->coord_x][newplayer->coord_y] = 'o';
-    newplayer->mun = 10;
+    newplayer->mun = 5;
     newplayer->flower = 0;
     return newplayer; 
 }
@@ -28,7 +28,7 @@ void bush_spawn(char ***map, Config *config)
     int i;
 
     i = 0;
-    srand(time(NULL));
+    //srand(time(NULL));
     while ( i < config->numb_of_bush)
     {
     do

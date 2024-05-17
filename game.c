@@ -33,7 +33,7 @@ void *display_map(void *args)
         }
         mvprintw(y + 1, 0, "Nombre de munitions: %d", player->mun);
         refresh();
-        usleep(45000);
+        usleep(50000);
     }
     free(display_args);
     pthread_exit(NULL);
@@ -98,19 +98,19 @@ void *pute_move(void *args)
     int x;
     int y;
     Pute_args *putes_args = (Pute_args *)args;
-    Pute *current = putes_args->pute;
+    Pute *pute = putes_args->pute;
     Pute *head = putes_args->pute;
     map = putes_args->map;
     while (flag)
     {
-        while (current != NULL)
+        while (pute != NULL)
         {
-            if (current->is_alive)
+            if (pute->is_alive)
             {
-                (*map)[current->coord_x][current->coord_y] = ' ';
+                (*map)[pute->coord_x][pute->coord_y] = ' ';
                 direction = rand() % 4;
-                x = current->coord_x;
-                y = current->coord_y;
+                x = pute->coord_x;
+                y = pute->coord_y;
                 switch (direction)
                 {
                 case 0: // haut
@@ -128,15 +128,15 @@ void *pute_move(void *args)
                 default:
                     break;
                 }
-                current->coord_x = x;
-                current->coord_y = y;
+                pute->coord_x = x;
+                pute->coord_y = y;
                 (*map)[x][y] = PUTE;
             }
-            current = current->next;
-            if (current != NULL)
-                usleep(current->speed);
+            pute = pute->next;
+            if (pute != NULL)
+                usleep(pute->speed);
         }
-        current = head;
+        pute = head;
     }
     free(putes_args);
     pthread_exit(NULL);
@@ -150,24 +150,24 @@ void *smartPute_move(void *args)
     int x;
     int y;
     Pute_args *smartPutes_args = (Pute_args *)args;
-    Pute *current = smartPutes_args->smartPute;
+    Pute *pute = smartPutes_args->smartPute;
     Pute *head = smartPutes_args->smartPute;
     Player *player = smartPutes_args->player;
     map = smartPutes_args->map;
 
     while (flag)
     {
-        while (current != NULL)
+        while (pute != NULL)
         {
-            if (current->is_alive)
+            if (pute->is_alive)
             {
-                (*map)[current->coord_x][current->coord_y] = ' ';
-                if (find_target(current, player) <= 15)
-                    direction = target_tracking(current, player);
+                (*map)[pute->coord_x][pute->coord_y] = ' ';
+                if (find_target(pute, player) <= 15)
+                    direction = target_tracking(pute, player);
                 else
                     direction = rand_r(&seed) % 4 + 1;
-                x = current->coord_x;
-                y = current->coord_y;
+                x = pute->coord_x;
+                y = pute->coord_y;
                 switch (direction)
                 {
                 case 1: // haut
@@ -188,15 +188,15 @@ void *smartPute_move(void *args)
                 default:
                     break;
                 }
-                current->coord_x = x;
-                current->coord_y = y;
+                pute->coord_x = x;
+                pute->coord_y = y;
                 (*map)[x][y] = SMART_PUTE;
             }
-            current = current->next;
-            if (current != NULL)
-                usleep(current->speed);
+            pute = pute->next;
+            if (pute != NULL)
+                usleep(pute->speed);
         }
-        current = head;
+        pute = head;
     }
     free(smartPutes_args);
     pthread_exit(NULL);
@@ -215,17 +215,21 @@ int checkpos(Entity *entity, Config *config, char ***map)
     if ((*map)[x][y] == AMMO)
     {
         (*map)[x][y] = ' ';
-        player->mun += 5;
+        player->mun += 3;
     }
     if ((*map)[x][y] == FLOWER)
         player->flower = 1;
     if (x == config->size_x  / 2 && y == config->size_y - 7)
     {
         if (player->flower)
-            return (2);
+            return (-1);
         else
             return (0);
     }
+    if ((*map)[x][y] == GO_RIGHT)
+        return (2);
+    if ((*map)[x][y] == GO_LEFT)
+        return (3);
     while (current_pute != NULL)
     {
         if (x == current_pute->coord_x && y == current_pute->coord_y)
@@ -309,27 +313,94 @@ void *check_dead_pute(void *args)
     pthread_exit(NULL);
 }
 
-void normal_game(char **map, Entity *entity, Config *config, Result *result) 
+struct Entity *creat_and_copy_entity(Game *game, Entity *src, Config *config)
 {
-    flag = 1;
-    result->check = 1;
-    pthread_t threads[NUM_OF_THREAD];
-    creat_threads(entity, &map, threads);
-    while (result->check == 1 && flag != 0) 
+    
+    Entity *tmp = malloc(sizeof(Entity));
+    tmp->player = malloc(sizeof(Player)); 
+    *tmp->player = *src->player; 
+    while(src->pute)
     {
-        map_struct(&map, config);
-        result->check = checkpos(entity, config, &map);
-        result->score += 0.0065;
-        usleep(10);
-    } 
-    flag = 0;
-     for (int i = 0; i < NUM_OF_THREAD; i++) {
-        pthread_join(threads[i], NULL);
+        tmp->pute = malloc(sizeof(Pute)); 
+        *tmp->pute = *src->pute;
+        tmp->pute = tmp->pute->next;
+        src->pute = src->pute->next;
     }
-    endwin();
+
+    while(src->smartPute)
+    {
+        tmp->smartPute = malloc(sizeof(Pute)); 
+        *tmp->smartPute = *src->smartPute;
+        tmp->smartPute = tmp->smartPute->next;
+        src->smartPute = src->smartPute->next;
+    }
+
+    return tmp;
 }
 
-void adventur_game(Game *game, Config *config, Result *result) 
+void pute_spawn_2(Pute *pute, char **map, Config * config)
+{
+    int x;
+    int y;
+
+    while (pute != NULL)
+    {
+        pute->is_alive = 1;
+        coord_generator(&map, &x, &y, config);
+        pute->coord_x = x;
+        pute->coord_y = y;
+        pute = pute->next;
+    }
+}
+
+void copy_entity(Game *game, Entity *src, Entity *dest,  Config *config)
+{  
+    while (src->pute)
+    {
+        *dest->pute = *src->pute;
+        dest->pute = dest->pute->next;
+        src->pute = src->pute->next;
+    }
+
+    while   (src->smartPute)
+    {
+        *dest->smartPute = *src->smartPute;
+        dest->smartPute = dest->smartPute->next;
+        src->smartPute = src->smartPute->next;
+    }
+
+}
+
+void change_map(Game *game, Config *config, int map_num, int lvl, int is_right)
+{
+    allocate_memory_and_read_file(&game->map_buffer, &config->size_x, &config->size_y, map_num, lvl);
+    map_copy(&game->map,&game->map_buffer);
+    if(is_right)
+    {
+        if (game->nextEntity == NULL)
+        {
+            game->prevEntity = (Entity *)creat_and_copy_entity(game, game->entity, config);
+            pute_spawn_2(game->entity->pute, game->map, config);
+            pute_spawn_2(game->entity->smartPute, game->map, config);
+            game->entity->player->coord_y = 1;
+        }
+        else 
+        {
+            copy_entity(game, game->nextEntity, game->entity, config);
+            game->nextEntity = NULL;
+            game->entity->player->coord_y = 1;
+
+        }
+    }
+    else
+    {        
+        game->nextEntity = (Entity *)creat_and_copy_entity(game, game->entity, config);
+        copy_entity(game, game->prevEntity, game->entity, config);
+        game->entity->player->coord_y = 78;
+    }
+}
+
+void normal_game(Game *game, Config *config, Result *result) 
 {
     flag = 1;
     result->check = 1;
@@ -337,14 +408,47 @@ void adventur_game(Game *game, Config *config, Result *result)
     creat_threads(game->entity, &game->map, threads);
     while (result->check == 1 && flag != 0) 
     {
-        map_refresh(&game->map,&game->map_buffer);
+        map_struct(&game->map, config);
         result->check = checkpos(game->entity, config, &game->map);
         result->score += 0.0065;
         usleep(10);
     } 
     flag = 0;
+     endwin();
      for (int i = 0; i < NUM_OF_THREAD; i++) {
         pthread_join(threads[i], NULL);
     }
-    endwin();
+}
+
+void adventur_game(Game *game, Config *config, Result *result) 
+{
+    int map_num;
+    int lvl;
+
+    map_num = 1;
+    lvl = 1;
+    flag = 1;
+    result->check = 1;
+    pthread_t threads[NUM_OF_THREAD];
+    creat_threads(game->entity, &game->map, threads);
+    while (result->check > 0 && flag != 0) 
+    {
+        int dir;
+        if (result->check >= 2)
+        {  
+           (result->check == 2) ? (map_num++, dir = 1) : (map_num--, dir = 2);
+            change_map(game, config, map_num, lvl, dir);
+            result->check = 1;
+        }
+        
+        map_refresh(&game->map,&game->map_buffer);
+        result->check = checkpos(game->entity, config, &game->map);
+        result->score += 0.0065;
+        usleep(10);
+    }
+    flag = 0;
+     endwin();
+     for (int i = 0; i < NUM_OF_THREAD; i++) {
+        pthread_join(threads[i], NULL);
+    }
 }

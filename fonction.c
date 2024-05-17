@@ -34,6 +34,7 @@ void pushPute(Pute **head, int x, int y, int speed) {
         current = current->next;
     }
     current->next = newpute; 
+    newpute->next = NULL;
 }
 
 void coord_generator(char ***map, int *x, int *y, Config *config)
@@ -42,7 +43,7 @@ void coord_generator(char ***map, int *x, int *y, Config *config)
   do
 	{
 	  *x = rand () %  (config->size_x - 2) + 1;		
-	  *y = rand () % (config->size_y - 2) + 1;
+	  *y = rand () % (config->size_y - 5) + 1;
 	}
   while ((*map)[*x][*y] != ' ');
 }
@@ -57,7 +58,7 @@ int check(char c, int is_player)
   }
   else
   {
-    if (c == PUTE || c == MAP_LIMITE || c == SAFE_ZONE || c == SMART_PUTE || c == SMART_PUTE || c == AMMO)
+    if (c == PUTE || c == MAP_LIMITE || c == SAFE_ZONE || c == SMART_PUTE || c == SMART_PUTE || c == AMMO || c == GO_LEFT || c == GO_RIGHT)
       return 1;
     else if (c == BUSH)
       return 2;
@@ -264,4 +265,9 @@ void read_file_to_map(char ***map, int x, int y, int map_num, int lvl) {
         line_count++;
     }
     fclose(file);
+}
+
+void clear_input_buffer() {
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF);
 }

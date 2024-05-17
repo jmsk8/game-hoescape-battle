@@ -47,9 +47,9 @@ void creat_check_dead_pute(Pute *pute, Pute *smartPute,  char ***map, pthread_t 
 
 void creat_threads (Entity *entity, char ***map, pthread_t *threads) {
     creat_display_thread(*map, entity->player, threads);
-    creat_smartPute_thread(entity, map, threads);
     creat_player_thread(entity, map, threads);
-    creat_pute_thread(entity, map, threads);
     creat_shotgun_check_thread(map, threads);
+    creat_smartPute_thread(entity, map, threads);
+    creat_pute_thread(entity, map, threads);
     creat_check_dead_pute(entity->pute, entity->smartPute, map, threads);
 }
