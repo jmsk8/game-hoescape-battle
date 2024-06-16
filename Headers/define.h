@@ -6,11 +6,13 @@
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h>
+#include <fcntl.h>
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
 
-#define BUSH 'o'
+#define BUSH '*'
+#define TREE 'o'
 #define PUTE 'h'
 #define SMART_PUTE 'H'
 #define PLAYER "Q"
@@ -18,11 +20,13 @@
 #define PUTE_PLAYER 49
 #define SAFE_ZONE 'X'
 #define MAP_LIMITE '0'
-#define FLOWER '*'
+#define FLOWER '+'
 #define BULLET 'x'
 #define AMMO 'I'
 #define GO_LEFT '<'
 #define GO_RIGHT '>'
+#define GO_UP '^'
+#define GO_DOWN 'v'
 
 
 #define LEFT 'q'

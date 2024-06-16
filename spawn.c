@@ -28,7 +28,6 @@ void bush_spawn(char ***map, Config *config)
     int i;
 
     i = 0;
-    //srand(time(NULL));
     while ( i < config->numb_of_bush)
     {
     do

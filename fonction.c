@@ -52,13 +52,13 @@ int check(char c, int is_player)
 {
   if (is_player)
   {
-    if (c == BUSH || c == MAP_LIMITE)
+    if (c == BUSH || c == MAP_LIMITE || c == TREE)
       return 1;
     return 0;
   }
   else
   {
-    if (c == PUTE || c == MAP_LIMITE || c == SAFE_ZONE || c == SMART_PUTE || c == SMART_PUTE || c == AMMO || c == GO_LEFT || c == GO_RIGHT)
+    if (c == PUTE || c == MAP_LIMITE || c == SAFE_ZONE || c == SMART_PUTE || c == SMART_PUTE || c == AMMO || c == GO_LEFT || c == GO_RIGHT || c == GO_UP || c == GO_DOWN || c == TREE)
       return 1;
     else if (c == BUSH)
       return 2;
@@ -249,22 +249,6 @@ int find_target(Pute *smartPute, Player *player)
     sum += abs(smartPute->coord_x - player->coord_x);
     sum += abs(smartPute->coord_y - player->coord_y);
     return (sum);
-}
-
-void read_file_to_map(char ***map, int x, int y, int map_num, int lvl) {
-    char filename[40];
-    sprintf(filename, "map%d.txt", map_num);
-    FILE *file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Impossible d'ouvrir le fichier %s.\n", filename);
-        exit(1);
-    }
-    int line_count = 0;
-    while (fgets(file, y, file)!= NULL) {
-        strcpy((*map)[line_count], file);
-        line_count++;
-    }
-    fclose(file);
 }
 
 void clear_input_buffer() {

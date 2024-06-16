@@ -66,9 +66,9 @@ int main(void)
         else 
             normal_game(game, config, result);
         printf("\033[2J\033[1;1H");
-        if (result->check == 0)
+        if (result->check == -1)
             print_result();
-        else if (result->check == 2)
+        else if (result->check == 0)
             printf("Gagné, score : %f\n", result->score / 100);
         free_setup(game->entity, game->map, config);
         free(game);

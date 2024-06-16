@@ -2,7 +2,9 @@
 EXECUTABLE = HoeScape
 
 # Liste des fichiers source
-SOURCES = main.c setup_game.c spawn.c game.c fonction.c threads.c
+SOURCES = *.c
+
+GNL_SOURCE = get_next_line/*.c
 
 # Répertoire contenant les en-têtes
 INCLUDE_DIR = Headers
@@ -17,7 +19,7 @@ CC = gcc
 DEPS = $(SOURCES:.c=.d)
 
 # Règle pour construire l'exécutable
-$(EXECUTABLE): $(SOURCES)
+$(EXECUTABLE): $(SOURCES) $(GNL_SOURCE)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 # Inclusion des fichiers de dépendances

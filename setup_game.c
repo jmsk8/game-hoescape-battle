@@ -1,5 +1,6 @@
 #include  "Headers/fonctions.h"
 #include  "Headers/define.h"
+#include  "Headers/get_next_line.h"
 
 void map_struct(char ***map, Config *config)
 {
@@ -149,6 +150,58 @@ void allocate_memory_and_read_file(char ***map, int *x, int *y, int map_num, int
     fclose(file);
 }
 
+void allocate_memory_and_read_file2(char ***map, int *x, int *y, int map_num, int lvl)
+{
+    char filename[40];
+    sprintf(filename, "map/niveau_%d/map%d.txt", lvl, map_num);
+    int fd = open(filename, O_RDONLY);
+    char **tab = NULL;
+	char *line;
+	int i = 0;
+    if (*map != NULL)
+	{
+		for (int j = 0; (*map)[j] != NULL; j++)
+			free((*map)[j]);
+		free(*map);
+	}
+    *map = NULL;
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		char **new_tab = (char **)realloc(tab, (i + 1) * sizeof(char *));
+		if (new_tab == NULL)
+		{
+			printf("Memory allocation failed.\n");
+			for (int j = 0; j < i; j++)
+			{
+				free(tab[j]);
+			}
+			free(tab);
+			close(fd);
+			return;
+		}
+		tab = new_tab;
+		tab[i] = line;
+		i++;
+	}
+	close(fd);
+	char **new_tab = (char **)realloc(tab, (i + 1) * sizeof(char *));
+	if (new_tab == NULL)
+	{
+		printf("Memory allocation failed.\n");
+		for (int j = 0; j < i; j++)
+		{
+			free(tab[j]);
+		}
+		free(tab);
+		return;
+	}
+	tab = new_tab;
+	tab[i] = NULL;
+	*x = i;
+	*y = i > 0 ? ft_strlen(tab[0]) : 0;
+	*map = tab;
+}
+
 void map_refresh(char ***map, char ***map_buffer)
 {
     int y;
@@ -161,7 +214,8 @@ void map_refresh(char ***map, char ***map_buffer)
         while ((*map)[i][y])
         {
             if ((*map_buffer)[i][y] == MAP_LIMITE || (*map_buffer)[i][y] == BUSH || (*map_buffer)[i][y] == FLOWER 
-            || (*map_buffer)[i][y] == GIRLFRIEND || (*map_buffer)[i][y] == GO_LEFT || (*map_buffer)[i][y] == GO_RIGHT || (*map_buffer)[i][y] == SAFE_ZONE)
+            || (*map_buffer)[i][y] == GIRLFRIEND || (*map_buffer)[i][y] == GO_LEFT || (*map_buffer)[i][y] == GO_RIGHT
+            || (*map_buffer)[i][y] == GO_UP || (*map_buffer)[i][y] == GO_DOWN ||  (*map_buffer)[i][y] == SAFE_ZONE || (*map_buffer)[i][y] == TREE)
                 (*map)[i][y] = (*map_buffer)[i][y];
             y++;
         }
@@ -193,7 +247,8 @@ void map_copy(char ***map, char ***map_buffer)
         while ((*map)[i][y])
         {
             if ((*map_buffer)[i][y] == MAP_LIMITE || (*map_buffer)[i][y] == BUSH || (*map_buffer)[i][y] == FLOWER 
-            || (*map_buffer)[i][y] == GIRLFRIEND || (*map_buffer)[i][y] == GO_LEFT || (*map_buffer)[i][y] == GO_RIGHT || (*map_buffer)[i][y] == SAFE_ZONE)
+            || (*map_buffer)[i][y] == GIRLFRIEND || (*map_buffer)[i][y] == GO_LEFT || (*map_buffer)[i][y] == GO_RIGHT  
+            || (*map_buffer)[i][y] == GO_UP || (*map_buffer)[i][y] == GO_DOWN || (*map_buffer)[i][y] == SAFE_ZONE)
                 (*map)[i][y] = (*map_buffer)[i][y];
             y++;
         }
@@ -243,11 +298,11 @@ void setup_config(Config *config)
         }
         if (ft_strcmp(rep, "easy") == 0)
         {
-            config->numb_of_pute = ((config->size_x * config->size_y) / 16);
+            config->numb_of_pute = ((config->size_x * config->size_y) / 18);
             config->numb_of_bush = ((config->size_x * config->size_y) / 14);
-            config->numb_of_smartPute = ((config->size_x * config->size_y) / 160);
+            config->numb_of_smartPute = ((config->size_x * config->size_y) / 180);
             config->game_speed = 1000000 / ((config->size_x * config->size_y) / 16);
-            config->smartPute_speed = 900000 / ((config->size_x * config->size_y) / 160);
+            config->smartPute_speed = 900000 / ((config->size_x * config->size_y) / 180);
             check = 1;
         }
         else if (ft_strcmp(rep, "normal") == 0)
@@ -285,8 +340,8 @@ void setup_config(Config *config)
 
 void setup_adventure_game(Game *game, Config *config)
 {
-    allocate_memory_and_read_file(&game->map, &config->size_x, &config->size_y, 1, 1);
-    allocate_memory_and_read_file(&game->map_buffer, &config->size_x, &config->size_y, 1, 1);
+    allocate_memory_and_read_file2(&game->map, &config->size_x, &config->size_y, 1, 1);
+    allocate_memory_and_read_file2(&game->map_buffer, &config->size_x, &config->size_y, 1, 1);
     game->entity->player = (Player *)player_spawn(config, &game->map);
     game->prevEntity = NULL;
     game->nextEntity = NULL;

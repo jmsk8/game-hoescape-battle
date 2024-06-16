@@ -64,4 +64,6 @@ void map_copy(char ***map, char ***map_buffer);
 
 void clear_input_buffer();
 
+void allocate_memory_and_read_file2(char ***map, int *x, int *y, int map_num, int lvl);
+
 #endif

@@ -7,22 +7,50 @@ void *display_map(void *args)
     DisplayArgs *display_args = (DisplayArgs *)args;
     char **map = display_args->map;
     Player *player = display_args->player;
-
+    start_color();
+     init_color(COLOR_BLACK, 100, 100, 100);
+    init_color(COLOR_MAGENTA, 1000, 500, 600);  
+    init_color(COLOR_GREEN, 500, 1000, 400);
+    init_pair(3, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(2, COLOR_GREEN, COLOR_BLACK);
+     init_pair(4, COLOR_CYAN, COLOR_BLACK);
+     init_pair(5, COLOR_RED, COLOR_BLACK);
+    
     while (flag)
     {
         int i = 0;
         int y = 0;
         clear();
-        while (map[i] != NULL)
+        while (flag && map[i] != NULL)
         {
             int j = 0;
             int x = 0;
 
-            while (map[i][j] != '\0')
+            while (flag && map[i][j] != '\0')
             {
                 if (i == player->coord_x && j == player->coord_y) {
+                    attron(COLOR_PAIR(1));
                     mvprintw(y, x, PLAYER);
-                } else {
+                    attroff(COLOR_PAIR(1));
+                } else if ( map[i][j] == BUSH ||  map[i][j] == TREE) 
+                {
+                    attron(COLOR_PAIR(2));
+                    mvprintw(y, x, "%c", map[i][j]);
+                    attroff(COLOR_PAIR(2));
+                } else if (map[i][j] == SAFE_ZONE){
+                    attron(COLOR_PAIR(4));
+                    mvprintw(y, x, "%c", map[i][j]);
+                    attroff(COLOR_PAIR(4));
+                } else if (map[i][j] == PUTE || map[i][j] == SMART_PUTE){
+                    attron(COLOR_PAIR(3));
+                    mvprintw(y, x, "%c", map[i][j]);
+                    attroff(COLOR_PAIR(3));
+                } else if (map[i][j] == FLOWER){
+                    attron(COLOR_PAIR(5));
+                    mvprintw(y, x, "%c", map[i][j]);
+                    attroff(COLOR_PAIR(5));
+                    }else{
                     mvprintw(y, x, "%c", map[i][j]);
                 }
                 x += 2;
@@ -33,7 +61,7 @@ void *display_map(void *args)
         }
         mvprintw(y + 1, 0, "Nombre de munitions: %d", player->mun);
         refresh();
-        usleep(50000);
+        usleep(70000);
     }
     free(display_args);
     pthread_exit(NULL);
@@ -49,41 +77,44 @@ void *player_move(void *args)
     {
         ch = getch();
         (*map)[player->coord_x][player->coord_y] = ' ';
-        switch (ch)
+        if (flag)
         {
-        case 'a':
-            flag = 0;
-            break;
-        case UP:
-            player->coord_x--;
-            if (check((*map)[player->coord_x][player->coord_y], 1))
-                player->coord_x++;
-            break;
-        case DOWN:
-            player->coord_x++;
-            if (check((*map)[player->coord_x][player->coord_y], 1))
-                player->coord_x--;
-            break;
-        case LEFT:
-            player->coord_y--;
-            if (check((*map)[player->coord_x][player->coord_y], 1))
-                player->coord_y++;
-            break;
-        case RIGHT:
-            player->coord_y++;
-            if (check((*map)[player->coord_x][player->coord_y], 1))
-                player->coord_y--;
-            break;
-        case '8':
-        case '4':
-        case '5':
-        case '6':
-            if (player->mun > 0)
+            switch (ch)
             {
-                player_shotgun(player, map, ch);
-                player ->mun -= 1;
+            case 'a':
+                flag = 0;
+                break;
+            case UP:
+                player->coord_x--;
+                if (check((*map)[player->coord_x][player->coord_y], 1))
+                    player->coord_x++;
+                break;
+            case DOWN:
+                player->coord_x++;
+                if (check((*map)[player->coord_x][player->coord_y], 1))
+                    player->coord_x--;
+                break;
+            case LEFT:
+                player->coord_y--;
+                if (check((*map)[player->coord_x][player->coord_y], 1))
+                    player->coord_y++;
+                break;
+            case RIGHT:
+                player->coord_y++;
+                if (check((*map)[player->coord_x][player->coord_y], 1))
+                    player->coord_y--;
+                break;
+            case '8':
+            case '4':
+            case '5':
+            case '6':
+                if (player->mun > 0)
+                {
+                    player_shotgun(player, map, ch);
+                    player->mun -= 1;
+                }
+                break;
             }
-            break;
         }
         usleep(10000);
     }
@@ -103,7 +134,7 @@ void *pute_move(void *args)
     map = putes_args->map;
     while (flag)
     {
-        while (pute != NULL)
+        while (flag &&  pute != NULL)
         {
             if (pute->is_alive)
             {
@@ -157,9 +188,9 @@ void *smartPute_move(void *args)
 
     while (flag)
     {
-        while (pute != NULL)
+        while (flag && pute != NULL)
         {
-            if (pute->is_alive)
+            if (flag && pute->is_alive)
             {
                 (*map)[pute->coord_x][pute->coord_y] = ' ';
                 if (find_target(pute, player) <= 15)
@@ -219,12 +250,12 @@ int checkpos(Entity *entity, Config *config, char ***map)
     }
     if ((*map)[x][y] == FLOWER)
         player->flower = 1;
-    if (x == config->size_x  / 2 && y == config->size_y - 7)
+    if ((*map)[x][y] == GIRLFRIEND)
     {
         if (player->flower)
-            return (-1);
-        else
             return (0);
+        else
+            return (-1);
     }
     if ((*map)[x][y] == GO_RIGHT)
         return (2);
@@ -233,13 +264,13 @@ int checkpos(Entity *entity, Config *config, char ***map)
     while (current_pute != NULL)
     {
         if (x == current_pute->coord_x && y == current_pute->coord_y)
-            return (0);
+            return (-1);
         current_pute = current_pute->next;
     }
     while (current_smartPute != NULL)
     {
         if (x == current_smartPute->coord_x && y == current_smartPute->coord_y)
-            return (0);
+            return (-1);
         current_smartPute = current_smartPute->next;
     }
         return (1);
@@ -255,7 +286,6 @@ void *shotgun_clear(void *args)
     x = 0;
     while (flag)
     {
-       
           while ((*map)[x])
             {
                 y = 0;
@@ -284,7 +314,7 @@ void *check_dead_pute(void *args)
     char ***map = pute_args->map;
     while (flag)
     {
-        while (pute != NULL)
+        while (flag && pute != NULL)
         {
             if ((*map)[pute->coord_x][pute->coord_y] == BULLET)
             {
@@ -294,7 +324,7 @@ void *check_dead_pute(void *args)
             }
             pute = pute->next;
         }
-        while (smartPute != NULL)
+        while (flag && smartPute != NULL)
         {
             if ((*map)[smartPute->coord_x][smartPute->coord_y] == BULLET)
             {
@@ -373,7 +403,7 @@ void copy_entity(Game *game, Entity *src, Entity *dest,  Config *config)
 
 void change_map(Game *game, Config *config, int map_num, int lvl, int is_right)
 {
-    allocate_memory_and_read_file(&game->map_buffer, &config->size_x, &config->size_y, map_num, lvl);
+    allocate_memory_and_read_file2(&game->map_buffer, &config->size_x, &config->size_y, map_num, lvl);
     map_copy(&game->map,&game->map_buffer);
     if(is_right)
     {
@@ -382,13 +412,16 @@ void change_map(Game *game, Config *config, int map_num, int lvl, int is_right)
             game->prevEntity = (Entity *)creat_and_copy_entity(game, game->entity, config);
             pute_spawn_2(game->entity->pute, game->map, config);
             pute_spawn_2(game->entity->smartPute, game->map, config);
-            game->entity->player->coord_y = 1;
+            if (is_right == 1)
+                game->entity->player->coord_y = 1;
+            else
+                game->entity->player->coord_y = 77;
         }
         else 
         {
             copy_entity(game, game->nextEntity, game->entity, config);
             game->nextEntity = NULL;
-            game->entity->player->coord_y = 1;
+            game->entity->player->coord_y = 78;
 
         }
     }
@@ -406,16 +439,21 @@ void normal_game(Game *game, Config *config, Result *result)
     result->check = 1;
     pthread_t threads[NUM_OF_THREAD];
     creat_threads(game->entity, &game->map, threads);
-    while (result->check == 1 && flag != 0) 
+    while (result->check == 1 && flag) 
     {
         map_struct(&game->map, config);
         result->check = checkpos(game->entity, config, &game->map);
+        if (result->check != 1)
+        {
+            flag = 0;
+            break ;
+        }
         result->score += 0.0065;
         usleep(10);
     } 
-    flag = 0;
      endwin();
      for (int i = 0; i < NUM_OF_THREAD; i++) {
+         printf("flag = %d arret du thread %d sur %d\n", flag, i + 1, NUM_OF_THREAD);
         pthread_join(threads[i], NULL);
     }
 }
@@ -449,6 +487,7 @@ void adventur_game(Game *game, Config *config, Result *result)
     flag = 0;
      endwin();
      for (int i = 0; i < NUM_OF_THREAD; i++) {
+        printf("arret du thread %d\n", i);
         pthread_join(threads[i], NULL);
     }
 }
