@@ -19,7 +19,7 @@ HEAD        = include/
 HEADERS     = include.h
 
 CFLAGS      = -g3 -Wall -Wextra -Werror -I $(HEAD)
-LDFLAGS     = -lncurses  # Utilise une variable séparée pour les options de liaison
+LDFLAGS     = -lncurses
 
 CC          = cc
 
