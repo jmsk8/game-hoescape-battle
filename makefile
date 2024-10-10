@@ -1,34 +1,42 @@
-# Nom de l'exécutable
-EXECUTABLE = HoeScape
 
-# Liste des fichiers source
-SOURCES = *.c
+NAME        = Hoescape
 
-GNL_SOURCE = get_next_line/*.c
+SRCS_MAN    = main.c \
+              fonction.c \
+              game.c \
+              setup_game.c \
+              spawn.c \
+              threads.c \
+			  get_next_line.c \
+			  get_next_line_utils.c \
 
-# Répertoire contenant les en-têtes
-INCLUDE_DIR = Headers
+MAN_PATH    = ./src/
+SRCS        = $(addprefix $(MAN_PATH), $(SRCS_MAN))
 
-# Flags de compilation
-CFLAGS = -I$(INCLUDE_DIR) -lncurses -O2
+OBJS        = $(SRCS:.c=.o)
 
-# Commande de compilation
-CC = gcc
+HEAD        = include/
+HEADERS     = include.h
 
-# Génération des dépendances
-DEPS = $(SOURCES:.c=.d)
+CFLAGS      = -g3 -Wall -Wextra -Werror -I $(HEAD)  # Déplace l'option -I ici
+LDFLAGS     = -lncurses  # Utilise une variable séparée pour les options de liaison
 
-# Règle pour construire l'exécutable
-$(EXECUTABLE): $(SOURCES) $(GNL_SOURCE)
-	$(CC) -o $@ $^ $(CFLAGS)
+CC          = cc
 
-# Inclusion des fichiers de dépendances
--include $(DEPS)
+all: $(NAME)
 
-# Nettoyage des fichiers générés
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)  # Ajoute LDFLAGS ici
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
 clean:
-	rm -f $(EXECUTABLE) *.o *.d
+	rm -f $(OBJS)
 
-# Règle pour démarrer le programme
-run: clean $(EXECUTABLE)
-	./$(EXECUTABLE)
+fclean: clean
+	rm -f $(NAME)
+
+re: fclean all
+
+.PHONY: all clean fclean re
