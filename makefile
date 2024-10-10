@@ -18,15 +18,15 @@ OBJS        = $(SRCS:.c=.o)
 HEAD        = include/
 HEADERS     = include.h
 
-CFLAGS      = -g3 -Wall -Wextra -Werror -I $(HEAD)  # Déplace l'option -I ici
-LDFLAGS     = -lncurses  # Utilise une variable séparée pour les options de liaison
+CFLAGS      = -g3 -Wall -Wextra -Werror -I $(HEAD)
+LDFLAGS     = -lncurses
 
 CC          = cc
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)  # Ajoute LDFLAGS ici
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
